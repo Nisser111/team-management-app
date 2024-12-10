@@ -1,5 +1,6 @@
 package pl.menagment_system.team_menagment_system.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +10,6 @@ import java.util.Date;
  * The Employee class represents an employee entity with various attributes
  * such as name, email, phone, hire date, role, and team association.
  */
-@Getter
-@Setter
 public class Employee {
 
     private int id;
@@ -43,5 +42,69 @@ public class Employee {
         this.hireDate = hireDate;
         this.role = role;
         this.teamId = teamId;
+    }
+
+    public void setId(Object value) {
+        this.id = (int) value;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setFirstName(Object value) {
+        this.firstName = (String) value;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setLastName(Object value) {
+        this.lastName = (String) value;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setEmail(Object value) {
+        this.email = (String) value;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setPhone(Object value) {
+        this.phone = (String) value;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setRole(Object value) {
+        this.role = (String) value;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setHireDate(Object value) {
+        this.hireDate = (Date) value;
+    }
+
+    public Date getHireDate() {
+        return hireDate;
+    }
+
+    public void setTeamId(Object value) {
+        this.teamId = (int) value;
+    }
+
+    public int getTeamId() {
+        return teamId;
     }
 }
