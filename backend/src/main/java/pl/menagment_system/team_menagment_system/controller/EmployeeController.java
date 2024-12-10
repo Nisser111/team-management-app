@@ -35,4 +35,15 @@ public class EmployeeController {
             return ResponseEntity.status(404).body("Employee with ID " + id + " not found.");
         }
     }
+
+    @PostMapping
+    public ResponseEntity<String> addEmployee(@RequestBody Employee employee) {
+        System.out.println(employee);
+        int rowsAffected = employeeRepository.save(employee);
+        if (rowsAffected > 0) {
+            return ResponseEntity.ok("New employee has been added successfully.");
+        } else {
+            return ResponseEntity.status(400).body("Failed to add the new employee.");
+        }
+    }
 }
