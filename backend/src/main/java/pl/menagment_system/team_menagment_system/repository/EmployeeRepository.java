@@ -1,0 +1,94 @@
+package pl.menagment_system.team_menagment_system.repository;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import pl.menagment_system.team_menagment_system.model.Employee;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+/**
+ * Repository class that provides CRUD operations for the Employee entity using JdbcTemplate.
+ */
+@Repository
+public class EmployeeRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    /**
+     * Constructs a new EmployeeRepository with the specified JdbcTemplate.
+     *
+     * @param jdbcTemplate the JdbcTemplate for interacting with the database
+     */
+    @Autowired
+    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    /**
+     * Retrieves all employees from the database.
+     *
+     * @return a list of Employee objects
+     */
+    public List<Employee> findAll() {
+        String sql = "SELECT * FROM employes";
+        return jdbcTemplate.query(sql, new EmployeeRowMapper());
+    }
+
+    /**
+     * Inserts a new Employee into the database.
+     *
+     * @param employee the Employee to save
+     * @return the number of rows affected
+     */
+    public int save(Employee employee) {
+        String sql = "INSERT INTO employes (first_name, last_name, email, phone, hire_date, role, team_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getEmail(),
+                employee.getPhone(), employee.getHireDate(), employee.getRole(), employee.getTeamId());
+    }
+
+    /**
+     * Updates an existing Employee in the database.
+     *
+     * @param employee the Employee with updated information
+     * @return the number of rows affected
+     */
+    public int update(Employee employee) {
+        String sql = "UPDATE employes SET first_name = ?, last_name = ?, email = ?, phone = ?, hire_date = ?, role = ?, team_id = ? WHERE ID = ?";
+        return jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getEmail(),
+                employee.getPhone(), employee.getHireDate(), employee.getRole(), employee.getTeamId(), employee.getId());
+    }
+
+    /**
+     * Deletes an Employee from the database by ID.
+     *
+     * @param id the ID of the Employee to delete
+     * @return the number of rows affected
+     */
+    public int deleteById(int id) {
+        String sql = "DELETE FROM employes WHERE ID = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+}
+
+/**
+ * RowMapper implementation for mapping rows of a ResultSet to Employee objects.
+ */
+class EmployeeRowMapper implements RowMapper<Employee> {
+    @Override
+    public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new Employee(
+                rs.getInt("ID"),
+                rs.getString("first_name"),
+                rs.getString("last_name"),
+                rs.getString("email"),
+                rs.getString("phone"),
+                rs.getDate("hire_date"),
+                rs.getString("role"),
+                rs.getInt("team_id")
+        );
+    }
+}
