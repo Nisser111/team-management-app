@@ -25,4 +25,14 @@ public class EmployeeController {
 
         return employeeRepository.findAll();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
+        int rowsAffected = employeeRepository.deleteById(id);
+        if (rowsAffected > 0) {
+            return ResponseEntity.ok("Employee with ID " + id + " has been deleted.");
+        } else {
+            return ResponseEntity.status(404).body("Employee with ID " + id + " not found.");
+        }
+    }
 }
