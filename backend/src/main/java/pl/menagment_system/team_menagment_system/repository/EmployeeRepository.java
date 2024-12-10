@@ -9,6 +9,7 @@ import pl.menagment_system.team_menagment_system.model.Employee;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class that provides CRUD operations for the Employee entity using JdbcTemplate.
@@ -36,6 +37,18 @@ public class EmployeeRepository {
     public List<Employee> findAll() {
         String sql = "SELECT * FROM employes";
         return jdbcTemplate.query(sql, new EmployeeRowMapper());
+    }
+
+    /**
+     * Retrieves an employee from the database by their ID.
+     *
+     * @param id the ID of the employee to retrieve
+     * @return the Employee object corresponding to the specified ID
+     */
+    public Optional<Employee> findById(int id) {
+        String sql = "SELECT * FROM employes WHERE ID = ?";
+        List<Employee> results = jdbcTemplate.query(sql, new EmployeeRowMapper(), id);
+        return results.stream().findFirst();
     }
 
     /**
