@@ -4,3 +4,13 @@
   padding: 3px 6px;
   border-radius: 8px;
 }
+
+@mixin mainContainer {
+  width: 75vw;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 0.2em;
+  padding: 1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
