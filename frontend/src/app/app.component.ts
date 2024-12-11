@@ -3,6 +3,7 @@ import { RouterOutlet } from "@angular/router";
 import { FilterHeaderComponent } from "../components/filter-header/filter-header.component";
 import { HelloUserHeaderComponent } from "../components/hello-user-header/hello-user-header.component";
 import { TeamSectionComponent } from "../components/team-section/team-section.component";
+import { TeamsContainerComponent } from "../components/teams-container/teams-container.component";
 
 @Component({
   selector: "app-root",
@@ -10,7 +11,7 @@ import { TeamSectionComponent } from "../components/team-section/team-section.co
     RouterOutlet,
     FilterHeaderComponent,
     HelloUserHeaderComponent,
-    TeamSectionComponent,
+    TeamsContainerComponent,
   ],
   template: `
     <app-hello-user-header></app-hello-user-header>
@@ -18,7 +19,7 @@ import { TeamSectionComponent } from "../components/team-section/team-section.co
     <app-filter-header></app-filter-header>
 
     <main>
-      <app-team-section></app-team-section>
+      <app-teams-container></app-teams-container>
     </main>
 
     <router-outlet />
