@@ -1,4 +1,4 @@
-@import "./mixins";
+@use "./mixins" as *;
 
 mat-toolbar {
   width: 75vw;

@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@use "./styles/mixins" as *;
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
-@import "./styles/mixins";
 
 * {
   box-sizing: border-box;
