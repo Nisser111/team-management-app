@@ -1,9 +1,10 @@
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
+import { FilterHeaderComponent } from "../components/filter-header/filter-header.component";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, FilterHeaderComponent],
   template: `
     <header id="app-header">
       <h1>
@@ -11,6 +12,8 @@ import { RouterOutlet } from "@angular/router";
         >! Zarządzaj swoimi zespołami.
       </h1>
     </header>
+
+    <app-filter-header></app-filter-header>
 
     <router-outlet />
   `,
