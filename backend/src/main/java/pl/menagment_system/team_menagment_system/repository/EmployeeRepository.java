@@ -52,6 +52,18 @@ public class EmployeeRepository {
     }
 
     /**
+     * Retrieves a list of employees belonging to a specific team from the database.
+     *
+     * @param teamId the ID of the team to filter employees by
+     * @return a list of Employee objects associated with the specified team ID
+     */
+    public List<Employee> findByTeamId(int teamId) {
+        String sql = "SELECT * FROM employes WHERE team_id = ?";
+        return jdbcTemplate.query(sql, new EmployeeRowMapper(), teamId);
+    }
+
+
+    /**
      * Inserts a new Employee into the database.
      *
      * @param employee the Employee to save

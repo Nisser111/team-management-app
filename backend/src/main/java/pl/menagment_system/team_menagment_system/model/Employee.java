@@ -1,8 +1,6 @@
 package pl.menagment_system.team_menagment_system.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 

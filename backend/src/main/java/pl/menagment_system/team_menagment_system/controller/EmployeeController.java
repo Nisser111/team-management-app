@@ -29,6 +29,15 @@ public class EmployeeController {
         return employeeRepository.findAll();
     }
 
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<?> getAllEmployees(@PathVariable int teamId) {
+        List<Employee> employees = employeeRepository.findByTeamId(teamId);
+        if (employees == null || employees.isEmpty()) {
+            return ResponseEntity.status(404).body("No employees found for team ID " + teamId + ".");
+        }
+        return ResponseEntity.ok(employees);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
         int rowsAffected = employeeRepository.deleteById(id);
