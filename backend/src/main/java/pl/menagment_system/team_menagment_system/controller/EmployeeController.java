@@ -11,6 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controller class for managing employee-related operations.
+ * This class handles HTTP requests for operations such as retrieving all employees,
+ * retrieving employees by team, adding new employees, deleting employees, and updating employees.
+ */
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -23,12 +28,23 @@ public class EmployeeController {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Retrieves all employees from the repository.
+     *
+     * @return a list of all employees
+     */
     @GetMapping
     public List<Employee> getAllEmployees() {
 
         return employeeRepository.findAll();
     }
 
+    /**
+     * Retrieves all employees associated with a specified team ID.
+     *
+     * @param teamId the ID of the team for which to retrieve employees
+     * @return a ResponseEntity containing the list of employees if found, or an error message if no employees are found for the given team ID
+     */
     @GetMapping("/team/{teamId}")
     public ResponseEntity<?> getAllEmployees(@PathVariable int teamId) {
         List<Employee> employees = employeeRepository.findByTeamId(teamId);
@@ -38,6 +54,13 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
+    /**
+     * Deletes an employee based on the provided ID.
+     *
+     * @param id the ID of the employee to be deleted
+     * @return a ResponseEntity containing a success message if the employee was deleted,
+     *         or an error message if the employee with the given ID was not found
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
         int rowsAffected = employeeRepository.deleteById(id);
@@ -48,6 +71,13 @@ public class EmployeeController {
         }
     }
 
+    /**
+     * Adds a new employee to the system.
+     *
+     * @param employee the employee object that contains the details of the new employee
+     * @return a ResponseEntity containing a success message if the employee was added successfully,
+     *         or an error message if the operation failed
+     */
     @PostMapping
     public ResponseEntity<String> addEmployee(@RequestBody Employee employee) {
         System.out.println(employee);
@@ -59,6 +89,20 @@ public class EmployeeController {
         }
     }
 
+    /**
+     * Updates an existing employee's details based on the provided updates.
+     * The method permits partial updates for specific employee fields
+     * and validates the provided fields against a predefined set of allowed keys.
+     *
+     * @param id the unique identifier of the employee to be updated
+     * @param updates a map containing key-value pairs where keys match employee field names
+     *                (e.g., "firstName", "lastName") and values are the updated field values
+     * @return a ResponseEntity containing a status code and a message.
+     *         Possible status codes include:
+     *         - 200: Successful update.
+     *         - 400: Invalid update request or unrecognized field.
+     *         - 404: Employee not found for the provided ID.
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody Map<String, Object> updates) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
