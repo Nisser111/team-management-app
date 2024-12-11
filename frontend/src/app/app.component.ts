@@ -5,18 +5,17 @@ import { RouterOutlet } from "@angular/router";
   selector: "app-root",
   imports: [RouterOutlet],
   template: `
-    <h1>{{ title }}</h1>
+    <header id="app-header">
+      <h1>
+        Witaj <span id="username">{{ username }}</span
+        >! Zarządzaj swoimi zespołami.
+      </h1>
+    </header>
 
     <router-outlet />
   `,
-  styles: [
-    `
-      h1 {
-        text-align: center;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class AppComponent {
-  title = "Witaj! Zarządzaj swoimi zespołami.";
+  username = "Miłosz"; // Temp
 }
