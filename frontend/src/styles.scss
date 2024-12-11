@@ -16,17 +16,3 @@ body {
   font-family: "Lato", "Roboto", "Helvetica Neue", sans-serif;
   background: #fcfcfc;
 }
-
-#app-header {
-  text-align: center;
-  margin: 2em auto;
-  max-width: 85vw;
-
-  h1 {
-    font-size: 1.3rem;
-  }
-}
-
-#username {
-  @include highlighted();
-}
