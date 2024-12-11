@@ -71,6 +71,11 @@ import { Employee } from "../../interfaces/Employee.interface";
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
+
+        <!-- Show info if team is empty -->
+        <p *ngIf="employees.length === 0" class="no-employees-info">
+          Brak pracowników w tym zespole
+        </p>
       </div>
     </section>
   `,

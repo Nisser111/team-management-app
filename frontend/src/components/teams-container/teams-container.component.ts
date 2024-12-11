@@ -1,42 +1,31 @@
 import { Component } from "@angular/core";
 import { TeamSectionComponent } from "../team-section/team-section.component";
 import { Employee } from "../../interfaces/Employee.interface";
+import { NgFor } from "@angular/common";
 
 @Component({
   selector: "app-teams-container",
-  imports: [TeamSectionComponent],
-  template: ` <app-team-section
-    [teamName]="teams[4].name"
-    [employees]="employees"
-  ></app-team-section>`,
-  styles: ``,
+  standalone: true,
+  imports: [TeamSectionComponent, NgFor],
+  template: `
+    <div *ngFor="let team of teams">
+      <app-team-section
+        [teamName]="team.name"
+        [employees]="getEmployeesByTeamId(team.id)"
+      ></app-team-section>
+    </div>
+  `,
+  styles: [],
 })
 export class TeamsContainerComponent {
-  // Temp
   teams = [
-    {
-      id: 1,
-      name: "Development Team",
-    },
-    {
-      id: 2,
-      name: "Front-end team",
-    },
-    {
-      id: 3,
-      name: "Sales Team",
-    },
-    {
-      id: 4,
-      name: "HR Team",
-    },
-    {
-      id: 5,
-      name: "Design Team",
-    },
+    { id: 1, name: "Development Team" },
+    { id: 2, name: "Front-end team" },
+    { id: 3, name: "Sales Team" },
+    { id: 4, name: "HR Team" },
+    { id: 5, name: "Design Team" },
   ];
 
-  // temp
   employees: Employee[] = [
     {
       id: 1,
@@ -76,17 +65,37 @@ export class TeamsContainerComponent {
       phone: "456-789-0123",
       hireDate: "2023-04-05",
       role: "HR Manager",
-      teamId: 4,
+      teamId: 5,
     },
     {
       id: 14,
       firstName: "Jakub",
-      lastName: "bujak",
+      lastName: "Bujak",
       email: "jakub.bujak@example.com",
       phone: "123456789",
       hireDate: "2023-10-20",
       role: "Project Manager",
       teamId: 2,
     },
+    {
+      id: 7,
+      firstName: "Jakub",
+      lastName: "Bujak",
+      email: "jakub.bujak@example.com",
+      phone: "123456789",
+      hireDate: "2023-10-20",
+      role: "Project Manager",
+      teamId: 5,
+    },
   ];
+
+  /**
+   * Retrieves a list of employees that belong to a specific team.
+   *
+   * @param teamId - The ID of the team for which to retrieve employees.
+   * @returns An array of Employee objects that are associated with the given team ID.
+   */
+  getEmployeesByTeamId(teamId: number): Employee[] {
+    return this.employees.filter((employee) => employee.teamId === teamId);
+  }
 }
