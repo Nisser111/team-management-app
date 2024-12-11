@@ -35,7 +35,7 @@ public class EmployeeRepository {
      * @return a list of Employee objects
      */
     public List<Employee> findAll() {
-        String sql = "SELECT * FROM employes";
+        String sql = "SELECT * FROM employees";
         return jdbcTemplate.query(sql, new EmployeeRowMapper());
     }
 
@@ -46,7 +46,7 @@ public class EmployeeRepository {
      * @return the Employee object corresponding to the specified ID
      */
     public Optional<Employee> findById(int id) {
-        String sql = "SELECT * FROM employes WHERE ID = ?";
+        String sql = "SELECT * FROM employees WHERE ID = ?";
         List<Employee> results = jdbcTemplate.query(sql, new EmployeeRowMapper(), id);
         return results.stream().findFirst();
     }
@@ -58,7 +58,7 @@ public class EmployeeRepository {
      * @return a list of Employee objects associated with the specified team ID
      */
     public List<Employee> findByTeamId(int teamId) {
-        String sql = "SELECT * FROM employes WHERE team_id = ?";
+        String sql = "SELECT * FROM employees WHERE team_id = ?";
         return jdbcTemplate.query(sql, new EmployeeRowMapper(), teamId);
     }
 
@@ -70,7 +70,7 @@ public class EmployeeRepository {
      * @return the number of rows affected
      */
     public int save(Employee employee) {
-        String sql = "INSERT INTO employes (first_name, last_name, email, phone, hire_date, role, team_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO employees (first_name, last_name, email, phone, hire_date, role, team_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getEmail(),
                 employee.getPhone(), employee.getHireDate(), employee.getRole(), employee.getTeamId());
     }
@@ -82,7 +82,7 @@ public class EmployeeRepository {
      * @return the number of rows affected
      */
     public int update(Employee employee) {
-        String sql = "UPDATE employes SET first_name = ?, last_name = ?, email = ?, phone = ?, hire_date = ?, role = ?, team_id = ? WHERE ID = ?";
+        String sql = "UPDATE employees SET first_name = ?, last_name = ?, email = ?, phone = ?, hire_date = ?, role = ?, team_id = ? WHERE ID = ?";
         return jdbcTemplate.update(sql, employee.getFirstName(), employee.getLastName(), employee.getEmail(),
                 employee.getPhone(), employee.getHireDate(), employee.getRole(), employee.getTeamId(), employee.getId());
     }
@@ -94,7 +94,7 @@ public class EmployeeRepository {
      * @return the number of rows affected
      */
     public int deleteById(int id) {
-        String sql = "DELETE FROM employes WHERE ID = ?";
+        String sql = "DELETE FROM employees WHERE ID = ?";
         return jdbcTemplate.update(sql, id);
     }
 }
