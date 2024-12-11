@@ -5,12 +5,18 @@ import { RouterOutlet } from "@angular/router";
   selector: "app-root",
   imports: [RouterOutlet],
   template: `
-    <h1>Welcome to {{ title }}!</h1>
+    <h1>{{ title }}</h1>
 
     <router-outlet />
   `,
-  styles: [],
+  styles: [
+    `
+      h1 {
+        text-align: center;
+      }
+    `,
+  ],
 })
 export class AppComponent {
-  title = "Team menagement app";
+  title = "Witaj! Zarządzaj swoimi zespołami.";
 }
