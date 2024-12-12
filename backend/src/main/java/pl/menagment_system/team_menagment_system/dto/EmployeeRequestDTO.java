@@ -1,48 +1,53 @@
 package pl.menagment_system.team_menagment_system.dto;
 
 import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
 
+
 /**
- * A Data Transfer Object (DTO) class for capturing and validating
- * employee-related data required in operations such as employee creation or update.
+ * A Data Transfer Object (DTO) class used to capture and validate input data
+ * for employee-related operations such as creation or updates within the system.
  *
- * The EmployeeRequestDTO class ensures that all fields are properly validated
- * and adhere to the specified constraints to maintain data integrity.
+ * The EmployeeRequestDTO ensures data validity by enforcing constraints
+ * on the fields via validation annotations. This helps in maintaining data integrity
+ * when processing employee information within the application.
  *
- * Fields include information such as the employee's name, contact details,
- * role, hire date, and associated team ID.
+ * The class also defines two marker interfaces, `Create` and `Update`, used
+ * to differentiate validation groups for Create and Update operations.
  *
- * Validation is enforced through annotations such as:
- * - @NotBlank: Ensures a string field is not null or empty.
- * - @Size: Enforces character length constraints.
- * - @Pattern: Validates strings against specific patterns.
- * - @Email: Validates a string as an email address.
- * - @NotNull: Ensures an object field is not null.
- * - @PastOrPresent: Ensures a date field is not in the future.
- * - @Positive: Enforces that a numeric field is greater than zero.
+ * Validation constraints applied include:
+ * - Required fields such as first name, last name, email, phone number, hire date, role, and team ID.
+ * - Email format validation to ensure a valid email address is provided.
+ * - String length constraints for first name and last name.
+ * - Pattern matching to validate the format of phone numbers.
+ * - Date constraint to ensure the hire date is not in the future.
+ * - Positive value requirement for numeric fields such as the team ID.
  *
- * This DTO is typically used to collect user inputs and transfer data
- * within layers of an application, such as from a client to a backend system.
+ * This class is primarily used to transfer data between the application layers
+ * while enforcing the required validations.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeRequestDTO {
+    public interface Create {}
+    public interface Update {}
     /**
      * Represents the first name of an employee.
      * It is a mandatory field and must meet the following requirements:
      * - Cannot be blank.
      * - Must contain between 2 and 50 characters.
      */
-    @NotBlank(message = "First name is required")
-    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
+    @NotBlank(message = "First name is required", groups = Create.class)
+    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters", groups = {Create.class, Update.class})
     private String firstName;
 
     /**
      * Represents the last name of the employee.
      * It is a required field and must contain between 2 and 50 characters.
      */
-    @NotBlank(message = "Last name is required")
-    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
+    @NotBlank(message = "Last name is required", groups = Create.class)
+    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters", groups = {Create.class, Update.class})
     private String lastName;
 
     /**
@@ -52,8 +57,8 @@ public class EmployeeRequestDTO {
      * - Cannot be null or blank.
      * - Must follow a standard email address format.
      */
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email address format")
+    @NotBlank(message = "Email is required", groups = Create.class)
+    @Email(message = "Invalid email address format", groups = {Create.class, Update.class})
     private String email;
 
     /**
@@ -68,9 +73,9 @@ public class EmployeeRequestDTO {
      *   - Allows spaces, hyphens, or dots as separators.
      *   - Includes the main phone number with additional groupings if required.
      */
-    @NotBlank(message = "Phone number is required")
+    @NotBlank(message = "Phone number is required", groups = Create.class)
     @Pattern(regexp = "(?:([+]\\d{1,4})[-.\\s]?)?(?:[(](\\d{1,3})[)][-.\\s]?)?(\\d{1,4})[-.\\s]?(\\d{1,4})[-.\\s]?(\\d{1,9})",
-            message = "Phone number must be valid")
+            message = "Phone number must be valid", groups = {Create.class, Update.class})
     private String phone;
 
     /**
@@ -78,8 +83,8 @@ public class EmployeeRequestDTO {
      * Must be a past or present date.
      * Cannot be null.
      */
-    @NotNull(message = "Hire date is required")
-    @PastOrPresent(message = "Hire date cannot be in the future")
+    @NotNull(message = "Hire date is required", groups = Create.class)
+    @PastOrPresent(message = "Hire date cannot be in the future", groups = {Create.class, Update.class})
     private Date hireDate;
 
     /**
@@ -87,7 +92,7 @@ public class EmployeeRequestDTO {
      * This field is mandatory and cannot be blank.
      * Validation ensures that the role is provided when creating or updating an employee instance.
      */
-    @NotBlank(message = "Role is required")
+    @NotBlank(message = "Role is required", groups = Create.class)
     private String role;
 
     /**
@@ -97,8 +102,8 @@ public class EmployeeRequestDTO {
      * - Cannot be null; throws a validation exception if null (NotNull).
      * - Must be a positive number; throws a validation exception if negative or zero (Positive).
      */
-    @NotNull(message = "Team ID is required")
-    @Positive(message = "Team ID must be a positive number")
+    @NotNull(message = "Team ID is required", groups = Create.class)
+    @Positive(message = "Team ID must be a positive number", groups = {Create.class, Update.class})
     private Integer teamId;
 
     /**

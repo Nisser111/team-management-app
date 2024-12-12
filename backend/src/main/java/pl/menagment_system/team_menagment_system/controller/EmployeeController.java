@@ -1,17 +1,15 @@
 package pl.menagment_system.team_menagment_system.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
 import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.repository.EmployeeRepository;
 import pl.menagment_system.team_menagment_system.services.EmployeeService;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -84,7 +82,7 @@ public class EmployeeController {
      *         or an error message with an appropriate HTTP status code in case of failure
      */
     @PostMapping
-    public ResponseEntity<String> addEmployee(@Valid @RequestBody EmployeeRequestDTO dto) {
+    public ResponseEntity<String> addEmployee(@Validated(EmployeeRequestDTO.Create.class) @RequestBody EmployeeRequestDTO dto) {
         try {
             employeeService.validateEmailUniqueness(dto.getEmail());
 
@@ -110,38 +108,56 @@ public class EmployeeController {
         }
     }
 
+
     /**
-     * Updates the details of an existing employee based on the provided ID and employee details.
-     * Validates the uniqueness of the email address if it has been changed.
+     * Updates an existing employee's details based on the provided ID and the updated fields in the request body.
+     * Only fields that are provided in the input will be updated.
      *
-     * @param id The unique identifier of the employee to update.
-     * @param employeeRequestDTO The data transfer object containing updated employee details.
-     * @return A ResponseEntity containing a success message if the update is successful,
-     *         or an error message if the update fails.
+     * @param id The ID of the employee to be updated.
+     * @param employeeRequestDTO The data transfer object containing the employee's updated details.
+     * @return A ResponseEntity containing a message and an appropriate HTTP status code:
+     *         - 200 OK if the update is successful.
+     *         - 404 Not Found if the employee with the given ID does not exist.
+     *         - 400 Bad Request if there is an issue with the input data.
+     *         - 500 Internal Server Error if an unexpected error occurs.
      */
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateEmployee(
             @PathVariable("id") int id,
-            @Valid @RequestBody EmployeeRequestDTO employeeRequestDTO) {
+            @RequestBody @Validated(EmployeeRequestDTO.Update.class) EmployeeRequestDTO employeeRequestDTO) {
         try {
             Optional<Employee> existingEmployeeOptional = employeeRepository.findById(id);
+
             if (existingEmployeeOptional.isEmpty()) {
                 return ResponseEntity.status(404).body("Employee not found");
             }
             Employee existingEmployee = existingEmployeeOptional.get();
 
-            if (!existingEmployee.getEmail().equals(employeeRequestDTO.getEmail())) {
-                employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail());
+            // Check each field and update only if provided
+            if (employeeRequestDTO.getFirstName() != null) {
+                existingEmployee.setFirstName(employeeRequestDTO.getFirstName());
+            }
+            if (employeeRequestDTO.getLastName() != null) {
+                existingEmployee.setLastName(employeeRequestDTO.getLastName());
+            }
+            if (employeeRequestDTO.getEmail() != null) {
+                employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail()); // Validation
+                existingEmployee.setEmail(employeeRequestDTO.getEmail());
+            }
+            if (employeeRequestDTO.getPhone() != null) {
+                existingEmployee.setPhone(employeeRequestDTO.getPhone());
+            }
+            if (employeeRequestDTO.getHireDate() != null) {
+                existingEmployee.setHireDate(employeeRequestDTO.getHireDate());
+            }
+            if (employeeRequestDTO.getRole() != null) {
+                existingEmployee.setRole(employeeRequestDTO.getRole());
+            }
+            if (employeeRequestDTO.getTeamId() != null) {
+                existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
             }
 
-            existingEmployee.setFirstName(employeeRequestDTO.getFirstName());
-            existingEmployee.setLastName(employeeRequestDTO.getLastName());
-            existingEmployee.setEmail(employeeRequestDTO.getEmail());
-            existingEmployee.setPhone(employeeRequestDTO.getPhone());
-            existingEmployee.setHireDate(employeeRequestDTO.getHireDate());
-            existingEmployee.setRole(employeeRequestDTO.getRole());
-            existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
-
+            // Save updated employee object
             employeeRepository.update(existingEmployee);
 
             return ResponseEntity.ok("Employee updated successfully.");
@@ -151,5 +167,4 @@ public class EmployeeController {
             return ResponseEntity.status(500).body("An unexpected error occurred.");
         }
     }
-
 }
