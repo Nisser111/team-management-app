@@ -25,9 +25,10 @@ CREATE TABLE
 --     avatars (
 --         employe_ID int primary key,
 --         path varchar(255),
---         FOREIGN KEY (employe_ID) REFERENCES employes (ID) ON DELETE CASCADE
+--         FOREIGN KEY (employe_ID) REFERENCES employees (ID) ON DELETE CASCADE
 --     );
 -- Example values
+
 INSERT INTO
     teams (name)
 VALUES
@@ -38,7 +39,7 @@ VALUES
     ('Design Team');
 
 INSERT INTO
-    employes (
+    employees (
         first_name,
         last_name,
         email,
@@ -94,5 +95,7 @@ VALUES
         5
     );
 
-
-    CREATE USER 'admin'@'%' IDENTIFIED VIA mysql_native_password USING '***';GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' REQUIRE NONE WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+-- admin
+CREATE USER 'admin'@'%' IDENTIFIED VIA mysql_native_password USING 'QEC8u';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' 
+REQUIRE NONE WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
