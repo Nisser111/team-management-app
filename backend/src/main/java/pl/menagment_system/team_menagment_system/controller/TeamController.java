@@ -1,8 +1,12 @@
 package pl.menagment_system.team_menagment_system.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
+import pl.menagment_system.team_menagment_system.dto.TeamRequestDTO;
+import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.model.Team;
 import pl.menagment_system.team_menagment_system.repository.TeamRepository;
 
@@ -52,46 +56,55 @@ public class TeamController {
         }
     }
 
+
     /**
-     * Adds a new team to the system.
+     * Adds a new team to the system using the data provided in the request body.
+     * The team name is mandatory, and the ID will be auto-generated.
+     * If the team name is missing or invalid, a 400 Bad Request is returned.
+     * If the operation is successful, a 200 OK response with a confirmation message is returned.
+     * Otherwise, a 400 Bad Request is returned in case of an error during the operation.
      *
-     * @param team the Team object containing the team details to be added;
-     *             must not be null, and its name field must not be null or empty.
-     * @return a ResponseEntity containing the status and a message indicating
-     *         the success or failure of the operation. Returns a 200 status for
-     *         successful addition, or a 400 status in case of errors.
+     * @param dto the data transfer object containing the team details to be added
+     * @return a ResponseEntity containing:
+     *         - a success message with HTTP status 200 if the team is created successfully
+     *         - an error message with HTTP status 400 if validation fails or the operation is unsuccessful
      */
     @PostMapping
-    public ResponseEntity<String> addTeam(@RequestBody Team team) {
-        if (team == null || team.getName() == null || team.getName().trim().isEmpty()) {
-            return ResponseEntity.status(400).body("Invalid team data. Team name is required.");
-        }
+    public ResponseEntity<String> addTeam(@Valid @RequestBody TeamRequestDTO dto) {
+        try {
+            Team team = new Team(
+                    0, // ID will be auto-generated
+                    dto.getName()
+            );
 
-        int rowsAffected = teamRepository.save(team);
-        if (rowsAffected > 0) {
+            teamRepository.save(team);
+
             return ResponseEntity.ok("New team has been added successfully.");
-        } else {
-            return ResponseEntity.status(400).body("Failed to add the new team.");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("Unexpected error occurred. Failed to add the new team.");
         }
     }
 
+
     /**
-     * Updates the attributes of an existing team entity identified by its ID.
-     * This method supports partial updates to the team object, currently limited to updating the team name.
-     * If the provided update data is invalid, the method returns an appropriate error message.
+     * Updates the details of an existing team identified by its unique ID.
+     * The method checks if the team exists, updates its name, and saves the changes.
+     * If the team does not exist or the update operation fails, an appropriate response is returned.
      *
-     * @param id the unique identifier of the team to update
-     * @param updates a map containing the fields to update and their new values
-     *                (currently supports only the "name" field)
-     * @return a ResponseEntity containing a success message, an error message, or
-     *         an appropriate HTTP status based on the outcome of the operation
+     * @param id the unique identifier of the team to be updated
+     * @param dto the data transfer object containing the updated team details
+     * @return a ResponseEntity containing:
+     *         - a success message with HTTP status 200 if the team is updated successfully
+     *         - an error message with HTTP status 404 if the team is not found
+     *         - an error message with HTTP status 400 if the update operation fails
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateTeam(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-        if (updates == null || updates.isEmpty()) {
-            return ResponseEntity.status(400).body("Update data cannot be null or empty.");
-        }
-
+    public ResponseEntity<String> updateTeam(
+            @PathVariable int id,
+            @Valid @RequestBody TeamRequestDTO dto) {
+        // Check if the team exists
         Optional<Team> optionalTeam = this.teamRepository.findById(id);
         if (optionalTeam.isEmpty()) {
             return ResponseEntity.status(404).body("Team with ID " + id + " not found.");
@@ -99,20 +112,10 @@ public class TeamController {
 
         Team existingTeam = optionalTeam.get();
 
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
+        // Update the team name
+        existingTeam.setName(dto.getName());
 
-            if ("name".equals(key)) {
-                if (value == null || ((String) value).trim().isEmpty()) {
-                    return ResponseEntity.status(400).body("Invalid team name.");
-                }
-                existingTeam.setName(value);
-            } else {
-                return ResponseEntity.status(400).body("Failed to update the team with ID " + id + ". Body element not recognized.");
-            }
-        }
-
+        // Save the updates
         int rowsAffected = teamRepository.update(existingTeam);
         if (rowsAffected > 0) {
             return ResponseEntity.ok("Team with ID " + id + " has been updated.");
