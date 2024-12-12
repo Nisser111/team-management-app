@@ -1,10 +1,13 @@
 package pl.menagment_system.team_menagment_system.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
 import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.repository.EmployeeRepository;
+import pl.menagment_system.team_menagment_system.services.EmployeeService;
 
 import java.util.Date;
 import java.util.List;
@@ -21,11 +24,13 @@ import java.util.Optional;
 public class EmployeeController {
 
     private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
     @Autowired
     public EmployeeController(EmployeeRepository employeeRepository) {
 
         this.employeeRepository = employeeRepository;
+        this.employeeService = new EmployeeService(employeeRepository);
     }
 
     /**
@@ -72,20 +77,37 @@ public class EmployeeController {
     }
 
     /**
-     * Adds a new employee to the system.
+     * Adds a new employee to the system based on the provided EmployeeRequestDTO.
+     * Handles validation and ensures email uniqueness before saving the employee.
      *
-     * @param employee the employee object that contains the details of the new employee
-     * @return a ResponseEntity containing a success message if the employee was added successfully,
-     *         or an error message if the operation failed
+     * @param dto the EmployeeRequestDTO object containing details of the employee to be added
+     * @return ResponseEntity containing a success message if the operation is successful,
+     *         or an error message with an appropriate HTTP status code in case of failure
      */
     @PostMapping
-    public ResponseEntity<String> addEmployee(@RequestBody Employee employee) {
-        System.out.println(employee);
-        int rowsAffected = employeeRepository.save(employee);
-        if (rowsAffected > 0) {
+    public ResponseEntity<String> addEmployee(@Valid @RequestBody EmployeeRequestDTO dto) {
+        try {
+            employeeService.validateEmailUniqueness(dto.getEmail());
+
+            Employee employee = new Employee(
+                    0, // ID will be auto-generated
+                    dto.getFirstName(),
+                    dto.getLastName(),
+                    dto.getEmail(),
+                    dto.getPhone(),
+                    dto.getHireDate(),
+                    dto.getRole(),
+                    dto.getTeamId()
+            );
+
+            // Save Employee
+            employeeRepository.save(employee);
+
             return ResponseEntity.ok("New employee has been added successfully.");
-        } else {
-            return ResponseEntity.status(400).body("Failed to add the new employee.");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("Unexpected error occurred.");
         }
     }
 
