@@ -1,0 +1,17 @@
+@use "./global-varriables.scss" as *;
+
+.add-new-team-btn {
+  display: block;
+  width: 75vw;
+  margin: 0 auto;
+  border-radius: 0;
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+  border: none;
+  border-top: 3px solid var(--mat-sys-secondary-fixed);
+}
+
+.mat-mdc-outlined-button:not(:disabled):hover {
+  border-radius: $globalRadius;
+}

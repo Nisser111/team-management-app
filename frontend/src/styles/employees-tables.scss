@@ -1,8 +1,8 @@
 @use "./mixins" as *;
+@use "./global-varriables.scss" as *;
 
 .team {
   @include mainContainer();
-  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,6 +18,10 @@
   .no-employees-info {
     text-align: center;
     margin-top: 1em;
+  }
+
+  .add-new-employee-btn {
+    border-radius: $globalRadius;
   }
 }
 
