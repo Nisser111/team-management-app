@@ -2,13 +2,13 @@ import { Component, Input } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { CommonModule } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
+import { MatButton, MatButtonModule } from "@angular/material/button";
 import { Employee } from "../../interfaces/Employee.interface";
 
 @Component({
   selector: "app-team-section",
   standalone: true,
-  imports: [MatTableModule, CommonModule, MatIcon, MatButtonModule],
+  imports: [MatTableModule, CommonModule, MatIcon, MatButtonModule, MatButton],
   template: `
     <section class="team">
       <h3>{{ teamName }}</h3>
@@ -77,6 +77,8 @@ import { Employee } from "../../interfaces/Employee.interface";
           Brak pracowników w tym zespole
         </p>
       </div>
+
+      <button mat-button class="add-new-employee-btn">Dodaj pracownika</button>
     </section>
   `,
   styleUrls: ["../../styles/employees-tables.scss"],
