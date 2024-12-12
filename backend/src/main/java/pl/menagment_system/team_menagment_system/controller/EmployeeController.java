@@ -43,7 +43,6 @@ public class EmployeeController {
 
         return employeeRepository.findAll();
     }
-
     /**
      * Retrieves all employees associated with a specified team ID.
      *
@@ -112,64 +111,45 @@ public class EmployeeController {
     }
 
     /**
-     * Updates an existing employee's details based on the provided updates.
-     * The method permits partial updates for specific employee fields
-     * and validates the provided fields against a predefined set of allowed keys.
+     * Updates the details of an existing employee based on the provided ID and employee details.
+     * Validates the uniqueness of the email address if it has been changed.
      *
-     * @param id the unique identifier of the employee to be updated
-     * @param updates a map containing key-value pairs where keys match employee field names
-     *                (e.g., "firstName", "lastName") and values are the updated field values
-     * @return a ResponseEntity containing a status code and a message.
-     *         Possible status codes include:
-     *         - 200: Successful update.
-     *         - 400: Invalid update request or unrecognized field.
-     *         - 404: Employee not found for the provided ID.
+     * @param id The unique identifier of the employee to update.
+     * @param employeeRequestDTO The data transfer object containing updated employee details.
+     * @return A ResponseEntity containing a success message if the update is successful,
+     *         or an error message if the update fails.
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        if (optionalEmployee.isEmpty()) {
-            return ResponseEntity.status(404).body("Employee with ID " + id + " not found.");
-        }
-
-        Employee existingEmployee = optionalEmployee.get();
-
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            switch (key) {
-                case "firstName":
-                    existingEmployee.setFirstName((String) value);
-                    break;
-                case "lastName":
-                    existingEmployee.setLastName((String) value);
-                    break;
-                case "email":
-                    existingEmployee.setEmail((String) value);
-                    break;
-                case "phone":
-                    existingEmployee.setPhone((String) value);
-                    break;
-                case "hireDate":
-                    existingEmployee.setHireDate((Date) value);
-                    break;
-                case "role":
-                    existingEmployee.setRole((String) value);
-                    break;
-                case "teamId":
-                    existingEmployee.setTeamId((Integer) value);
-                    break;
-                default:
-                    return ResponseEntity.status(400).body("Failed to update the employee with ID" + id + ". Body element not recognized. ");
+    public ResponseEntity<String> updateEmployee(
+            @PathVariable("id") int id,
+            @Valid @RequestBody EmployeeRequestDTO employeeRequestDTO) {
+        try {
+            Optional<Employee> existingEmployeeOptional = employeeRepository.findById(id);
+            if (existingEmployeeOptional.isEmpty()) {
+                return ResponseEntity.status(404).body("Employee not found");
             }
-        }
+            Employee existingEmployee = existingEmployeeOptional.get();
 
-        int rowsAffected = employeeRepository.update(existingEmployee);
-        if (rowsAffected > 0) {
-            return ResponseEntity.ok("Employee with ID " + id + " has been updated.");
-        } else {
-            return ResponseEntity.status(400).body("Failed to update the employee with ID" + id + ".");
+            if (!existingEmployee.getEmail().equals(employeeRequestDTO.getEmail())) {
+                employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail());
+            }
+
+            existingEmployee.setFirstName(employeeRequestDTO.getFirstName());
+            existingEmployee.setLastName(employeeRequestDTO.getLastName());
+            existingEmployee.setEmail(employeeRequestDTO.getEmail());
+            existingEmployee.setPhone(employeeRequestDTO.getPhone());
+            existingEmployee.setHireDate(employeeRequestDTO.getHireDate());
+            existingEmployee.setRole(employeeRequestDTO.getRole());
+            existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
+
+            employeeRepository.update(existingEmployee);
+
+            return ResponseEntity.ok("Employee updated successfully.");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(400).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("An unexpected error occurred.");
         }
     }
+
 }
