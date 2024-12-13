@@ -18,6 +18,7 @@ import java.util.Optional;
  * retrieving employees by team, adding new employees, deleting employees, and updating employees.
  */
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/employees")
 public class EmployeeController {
 
