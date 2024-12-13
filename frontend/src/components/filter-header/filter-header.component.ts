@@ -4,6 +4,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { Team } from "../../interfaces/Team.interface";
+import { TeamService } from "../../services/teams.service";
 
 /**
  * FilterHeaderComponent is a standalone component that provides a toolbar
@@ -18,7 +19,7 @@ import { Team } from "../../interfaces/Team.interface";
     <mat-toolbar color="primary">
       <h2>
         <mat-icon>tune</mat-icon>
-        {{ title }}
+        Pokaż
       </h2>
       <div class="spacer"></div>
 
@@ -35,14 +36,20 @@ import { Team } from "../../interfaces/Team.interface";
   styleUrls: ["../../styles/filter-header.scss"],
 })
 export class FilterHeaderComponent {
-  title = "Pokaż";
+  selectedTeam = -1;
+  teams: Team[] = [];
 
-  teamsFromDb: Team[] = [
-    { id: 1, name: "Frontend team" },
-    { id: 2, name: "Backend team" },
-    { id: 3, name: "Menagemenet team" },
-  ]; //temp
+  constructor(private teamService: TeamService) {}
 
-  teams = [{ id: "all", name: "Wszystkie" }, ...this.teamsFromDb];
-  selectedTeam = "all";
+  ngOnInit() {
+    // Fetch teams
+    this.teamService.getTeams().subscribe({
+      next: (data) => {
+        this.teams = [{ id: -1, name: "Wszystkie" }, ...data];
+      },
+      error: (error) => {
+        console.error("Error fetching teams:", error);
+      },
+    });
+  }
 }
