@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { Team } from "../../interfaces/Team.interface";
 import { TeamService } from "../../services/teams.service";
+import { NgFor } from "@angular/common";
 
 /**
  * FilterHeaderComponent is a standalone component that provides a toolbar
@@ -14,7 +15,13 @@ import { TeamService } from "../../services/teams.service";
 @Component({
   selector: "app-filter-header",
   standalone: true,
-  imports: [MatToolbarModule, MatSelectModule, FormsModule, MatIconModule],
+  imports: [
+    MatToolbarModule,
+    MatSelectModule,
+    FormsModule,
+    MatIconModule,
+    NgFor,
+  ],
   template: `
     <mat-toolbar color="primary">
       <h2>
@@ -25,10 +32,13 @@ import { TeamService } from "../../services/teams.service";
 
       <mat-form-field>
         <mat-label>Pokaż zespół</mat-label>
-        <mat-select [(ngModel)]="selectedTeam">
-          @for (team of teams; track team) {
-          <mat-option [value]="team.id">{{ team.name }}</mat-option>
-          }
+        <mat-select
+          [(ngModel)]="selectedTeam"
+          (selectionChange)="onTeamSelect($event.value)"
+        >
+          <mat-option *ngFor="let team of teams" [value]="team.id">{{
+            team.name
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
     </mat-toolbar>
@@ -36,6 +46,7 @@ import { TeamService } from "../../services/teams.service";
   styleUrls: ["../../styles/filter-header.scss"],
 })
 export class FilterHeaderComponent {
+  @Output() teamSelected = new EventEmitter<number>();
   selectedTeam = -1;
   teams: Team[] = [];
 
@@ -51,5 +62,9 @@ export class FilterHeaderComponent {
         console.error("Error fetching teams:", error);
       },
     });
+  }
+
+  onTeamSelect(teamId: number) {
+    this.teamSelected.emit(teamId);
   }
 }

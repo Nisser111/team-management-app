@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { TeamSectionComponent } from "../team-section/team-section.component";
 import { Employee } from "../../interfaces/Employee.interface";
 import { NgFor } from "@angular/common";
@@ -12,7 +12,7 @@ import { EmployeesService } from "../../services/employees.service";
   standalone: true,
   imports: [TeamSectionComponent, NgFor, AddNewTeamBtnComponent],
   template: `
-    <div *ngFor="let team of teams">
+    <div *ngFor="let team of filteredTeams">
       <app-team-section
         [teamName]="team.name"
         [employees]="getEmployeesByTeamId(team.id)"
@@ -23,7 +23,9 @@ import { EmployeesService } from "../../services/employees.service";
   styles: [],
 })
 export class TeamsContainerComponent implements OnInit {
+  @Input() selectedTeamId: number = -1; // Input property for selected team ID. -1 means all teams
   teams: Team[] = [];
+  filteredTeams: Team[] = [];
   employees: Employee[] = [];
 
   constructor(
@@ -36,6 +38,7 @@ export class TeamsContainerComponent implements OnInit {
     this.teamService.getTeams().subscribe({
       next: (data) => {
         this.teams = data;
+        this.filterTeams(); // Filter teams initially
       },
       error: (error) => {
         console.error("Error fetching teams:", error);
@@ -51,6 +54,22 @@ export class TeamsContainerComponent implements OnInit {
         console.error("Error fetching employees:", error);
       },
     });
+  }
+
+  ngOnChanges() {
+    this.filterTeams(); // Re-filter teams when selectedTeamId changes
+  }
+
+  // Method to filter teams based on selected team ID
+  filterTeams() {
+    if (this.selectedTeamId === -1) {
+      this.filteredTeams = this.teams;
+    } else {
+      // Filter teams based on selection
+      this.filteredTeams = this.teams.filter(
+        (team) => team.id === this.selectedTeamId
+      );
+    }
   }
 
   /**
