@@ -1,4 +1,4 @@
 export interface Team {
-  value: string | number;
-  viewValue: string;
+  id: number;
+  name: string;
 }

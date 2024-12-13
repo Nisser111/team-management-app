@@ -1,8 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { TeamSectionComponent } from "../team-section/team-section.component";
 import { Employee } from "../../interfaces/Employee.interface";
 import { NgFor } from "@angular/common";
 import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.component";
+import { Team } from "../../interfaces/Team.interface";
+import { TeamService } from "../../services/teams.service";
 
 @Component({
   selector: "app-teams-container",
@@ -19,15 +21,8 @@ import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.com
   `,
   styles: [],
 })
-export class TeamsContainerComponent {
-  teams = [
-    { id: 1, name: "Development Team" },
-    { id: 2, name: "Front-end team" },
-    { id: 3, name: "Sales Team" },
-    { id: 4, name: "HR Team" },
-    { id: 5, name: "Design Team" },
-  ];
-
+export class TeamsContainerComponent implements OnInit {
+  teams: Team[] = [];
   employees: Employee[] = [
     {
       id: 1,
@@ -90,6 +85,19 @@ export class TeamsContainerComponent {
       teamId: 5,
     },
   ];
+
+  constructor(private teamService: TeamService) {}
+
+  ngOnInit() {
+    this.teamService.getTeams().subscribe({
+      next: (data) => {
+        this.teams = data;
+      },
+      error: (error) => {
+        console.error("Error fetching teams:", error);
+      },
+    });
+  }
 
   /**
    * Retrieves a list of employees that belong to a specific team.

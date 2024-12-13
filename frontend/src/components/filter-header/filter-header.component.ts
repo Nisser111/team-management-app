@@ -26,7 +26,7 @@ import { Team } from "../../interfaces/Team.interface";
         <mat-label>Pokaż zespół</mat-label>
         <mat-select [(ngModel)]="selectedTeam">
           @for (team of teams; track team) {
-          <mat-option [value]="team.value">{{ team.viewValue }}</mat-option>
+          <mat-option [value]="team.id">{{ team.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -38,11 +38,11 @@ export class FilterHeaderComponent {
   title = "Pokaż";
 
   teamsFromDb: Team[] = [
-    { value: 1, viewValue: "Frontend team" },
-    { value: 2, viewValue: "Backend team" },
-    { value: 3, viewValue: "Menagemenet team" },
+    { id: 1, name: "Frontend team" },
+    { id: 2, name: "Backend team" },
+    { id: 3, name: "Menagemenet team" },
   ]; //temp
 
-  teams = [{ value: "all", viewValue: "Wszystkie" }, ...this.teamsFromDb];
-  selectedTeam = "all";
+  teams = [{ id: -1, name: "Wszystkie" }, ...this.teamsFromDb];
+  selectedTeam = -1;
 }
