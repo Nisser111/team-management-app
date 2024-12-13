@@ -2,13 +2,12 @@ import { Component } from "@angular/core";
 import { TeamSectionComponent } from "../team-section/team-section.component";
 import { Employee } from "../../interfaces/Employee.interface";
 import { NgFor } from "@angular/common";
-import { MatButton } from "@angular/material/button";
 import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.component";
 
 @Component({
   selector: "app-teams-container",
   standalone: true,
-  imports: [TeamSectionComponent, NgFor, MatButton, AddNewTeamBtnComponent],
+  imports: [TeamSectionComponent, NgFor, AddNewTeamBtnComponent],
   template: `
     <div *ngFor="let team of teams">
       <app-team-section

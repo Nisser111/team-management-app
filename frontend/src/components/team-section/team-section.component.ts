@@ -4,11 +4,19 @@ import { CommonModule } from "@angular/common";
 import { MatIcon } from "@angular/material/icon";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { Employee } from "../../interfaces/Employee.interface";
+import { EmployeeOptionsListComponent } from "../employee-options-list/employee-options-list.component";
 
 @Component({
   selector: "app-team-section",
   standalone: true,
-  imports: [MatTableModule, CommonModule, MatIcon, MatButtonModule, MatButton],
+  imports: [
+    MatTableModule,
+    CommonModule,
+    MatIcon,
+    MatButtonModule,
+    MatButton,
+    EmployeeOptionsListComponent,
+  ],
   template: `
     <section class="team">
       <h3>{{ teamName }}</h3>
@@ -62,9 +70,12 @@ import { Employee } from "../../interfaces/Employee.interface";
           <ng-container matColumnDef="options">
             <th mat-header-cell *matHeaderCellDef>Opcje</th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button aria-label="Przycisk opcji">
-                <mat-icon>more_vert</mat-icon>
-              </button>
+              <app-employee-options-list
+                [employee]="element"
+                (edit)="editEmployee($event)"
+                (move)="moveEmployee($event)"
+                (delete)="deleteEmployee($event)"
+              ></app-employee-options-list>
             </td>
           </ng-container>
 
@@ -86,6 +97,18 @@ import { Employee } from "../../interfaces/Employee.interface";
 export class TeamSectionComponent {
   @Input() teamName: string = "";
   @Input() employees: Employee[] = [];
+
+  editEmployee(employee: Employee) {
+    // Implement edit logic here
+  }
+
+  moveEmployee(employee: Employee) {
+    // Implement move logic here
+  }
+
+  deleteEmployee(employee: Employee) {
+    // Implement delete logic here
+  }
 
   displayedColumns: string[] = [
     "id",
