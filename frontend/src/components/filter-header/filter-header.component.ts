@@ -43,6 +43,6 @@ export class FilterHeaderComponent {
     { id: 3, name: "Menagemenet team" },
   ]; //temp
 
-  teams = [{ id: -1, name: "Wszystkie" }, ...this.teamsFromDb];
-  selectedTeam = -1;
+  teams = [{ id: "all", name: "Wszystkie" }, ...this.teamsFromDb];
+  selectedTeam = "all";
 }
