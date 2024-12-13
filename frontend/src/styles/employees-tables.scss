@@ -38,3 +38,8 @@ table {
   font-weight: bold;
   color: rgba(0, 0, 0, 0.87);
 }
+
+header {
+  display: flex;
+  justify-content: space-between;
+}

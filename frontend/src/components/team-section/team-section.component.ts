@@ -1,10 +1,10 @@
 import { Component, Input } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { CommonModule } from "@angular/common";
-import { MatIcon } from "@angular/material/icon";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { Employee } from "../../interfaces/Employee.interface";
 import { EmployeeOptionsListComponent } from "../employee-options-list/employee-options-list.component";
+import { EditTeamNameButtonComponent } from "../edit-team-name-button/edit-team-name-button.component";
 
 @Component({
   selector: "app-team-section",
@@ -12,14 +12,21 @@ import { EmployeeOptionsListComponent } from "../employee-options-list/employee-
   imports: [
     MatTableModule,
     CommonModule,
-    MatIcon,
     MatButtonModule,
     MatButton,
     EmployeeOptionsListComponent,
+    EditTeamNameButtonComponent,
   ],
   template: `
     <section class="team">
-      <h3>{{ teamName }}</h3>
+      <header>
+        <h3>
+          {{ teamName }}
+        </h3>
+        <app-edit-team-name-button
+          (edit)="editTeamName()"
+        ></app-edit-team-name-button>
+      </header>
       <div class="table-container">
         <table mat-table [dataSource]="employees" class="mat-elevation-z8">
           <!-- ID Column -->
@@ -97,6 +104,10 @@ import { EmployeeOptionsListComponent } from "../employee-options-list/employee-
 export class TeamSectionComponent {
   @Input() teamName: string = "";
   @Input() employees: Employee[] = [];
+
+  editTeamName() {
+    // Implement the logic to edit the team name
+  }
 
   editEmployee(employee: Employee) {
     // Implement edit logic here
