@@ -5,6 +5,7 @@ import { NgFor } from "@angular/common";
 import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.component";
 import { Team } from "../../interfaces/Team.interface";
 import { TeamService } from "../../services/teams.service";
+import { EmployeesService } from "../../services/employees.service";
 
 @Component({
   selector: "app-teams-container",
@@ -23,78 +24,31 @@ import { TeamService } from "../../services/teams.service";
 })
 export class TeamsContainerComponent implements OnInit {
   teams: Team[] = [];
-  employees: Employee[] = [
-    {
-      id: 1,
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      phone: "123-456-7890",
-      hireDate: "2023-01-15",
-      role: "Developer",
-      teamId: 1,
-    },
-    {
-      id: 2,
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "jane.smith@example.com",
-      phone: "234-567-8901",
-      hireDate: "2023-02-20",
-      role: "Marketing Specialist",
-      teamId: 2,
-    },
-    {
-      id: 3,
-      firstName: "Emily",
-      lastName: "Johnson",
-      email: "emily.johnson@example.com",
-      phone: "345-678-9012",
-      hireDate: "2023-03-10",
-      role: "Sales Associate",
-      teamId: 3,
-    },
-    {
-      id: 4,
-      firstName: "Michael",
-      lastName: "Brown",
-      email: "michael.brown@example.com",
-      phone: "456-789-0123",
-      hireDate: "2023-04-05",
-      role: "HR Manager",
-      teamId: 5,
-    },
-    {
-      id: 14,
-      firstName: "Jakub",
-      lastName: "Bujak",
-      email: "jakub.bujak@example.com",
-      phone: "123456789",
-      hireDate: "2023-10-20",
-      role: "Project Manager",
-      teamId: 2,
-    },
-    {
-      id: 7,
-      firstName: "Jakub",
-      lastName: "Bujak",
-      email: "jakub.bujak@example.com",
-      phone: "123456789",
-      hireDate: "2023-10-20",
-      role: "Project Manager",
-      teamId: 5,
-    },
-  ];
+  employees: Employee[] = [];
 
-  constructor(private teamService: TeamService) {}
+  constructor(
+    private teamService: TeamService,
+    private employeesService: EmployeesService
+  ) {}
 
   ngOnInit() {
+    // Fetch teams
     this.teamService.getTeams().subscribe({
       next: (data) => {
         this.teams = data;
       },
       error: (error) => {
         console.error("Error fetching teams:", error);
+      },
+    });
+
+    // Fetch employees
+    this.employeesService.getAll().subscribe({
+      next: (data) => {
+        this.employees = data;
+      },
+      error: (error) => {
+        console.error("Error fetching employees:", error);
       },
     });
   }
