@@ -4,14 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
 import pl.menagment_system.team_menagment_system.dto.TeamRequestDTO;
-import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.model.Team;
 import pl.menagment_system.team_menagment_system.repository.TeamRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,9 +46,11 @@ public class TeamController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTeam(@PathVariable int id) {
+        String teamName = teamRepository.findById(id).get().getName();
+
         int rowsAffected = teamRepository.deleteById(id);
         if (rowsAffected > 0) {
-            return ResponseEntity.ok("Team with ID " + id + " has been deleted.");
+            return ResponseEntity.ok(teamName + " has been deleted.");
         } else {
             return ResponseEntity.status(404).body("Team with ID " + id + " not found.");
         }
@@ -112,14 +111,16 @@ public class TeamController {
         }
 
         Team existingTeam = optionalTeam.get();
+        String oldTeamName = existingTeam.getName();
 
         // Update the team name
         existingTeam.setName(dto.getName());
+        String newTeamName = existingTeam.getName();
 
         // Save the updates
         int rowsAffected = teamRepository.update(existingTeam);
         if (rowsAffected > 0) {
-            return ResponseEntity.ok("Team with ID " + id + " has been updated.");
+            return ResponseEntity.ok(oldTeamName + " has been updated to " + newTeamName);
         } else {
             return ResponseEntity.status(400).body("Failed to update the team with ID " + id + ".");
         }
