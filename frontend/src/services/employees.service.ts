@@ -44,4 +44,16 @@ export class EmployeesService {
         })
       );
   }
+
+  /**
+   * Adds a new employee to the server.
+   *
+   * @param employee The Employee object to be added.
+   * @returns An Observable of the response from the server, which can be either a JSON object or a plain text message.
+   */
+  addNew(employee: Employee): Observable<any> {
+    return this.http.post<string>(`${this.apiUrl}/employees`, employee, {
+      responseType: "text" as "json",
+    });
+  }
 }

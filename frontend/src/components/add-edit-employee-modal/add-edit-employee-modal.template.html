@@ -1,0 +1,100 @@
+<h3 mat-dialog-title>{{ data.dialogTitle }}</h3>
+<div mat-dialog-content class="mat-dialog-content">
+  <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <mat-form-field appearance="fill">
+        <mat-label>Imię</mat-label>
+        <input matInput formControlName="firstName" required />
+        <mat-hint *ngIf="employeeForm.get('firstName')?.hasError('required')"
+          >Imię jest wymagane.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('firstName')?.hasError('minlength')"
+          >Imię musi mieć co najmniej 2 znaki.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('firstName')?.hasError('maxlength')"
+          >Imię może mieć maksymalnie 50 znaków.</mat-hint
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Nazwisko</mat-label>
+        <input matInput formControlName="lastName" required />
+        <mat-hint *ngIf="employeeForm.get('lastName')?.hasError('required')"
+          >Nazwisko jest wymagane.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('lastName')?.hasError('minlength')"
+          >Nazwisko musi mieć co najmniej 2 znaki.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('firstName')?.hasError('maxlength')"
+          >Nazwisko może mieć maksymalnie 50 znaków.</mat-hint
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required />
+        <mat-hint *ngIf="employeeForm.get('email')?.hasError('required')"
+          >Email jest wymagany.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('email')?.hasError('email')"
+          >Proszę podać poprawny adres email.</mat-hint
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Telefon</mat-label>
+        <input matInput formControlName="phone" required />
+        <mat-hint *ngIf="employeeForm.get('phone')?.hasError('required')"
+          >Telefon jest wymagany.</mat-hint
+        >
+        <mat-hint *ngIf="employeeForm.get('phone')?.hasError('pattern')"
+          >Proszę podać poprawny numer telefonu.</mat-hint
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="fill">
+        <mat-label>Data zatrudnienia</mat-label>
+        <input matInput type="date" formControlName="hireDate" required />
+        <mat-hint *ngIf="employeeForm.get('hireDate')?.hasError('required')"
+          >Data zatrudnienia jest wymagana.</mat-hint
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Stanowisko</mat-label>
+        <input matInput formControlName="role" required />
+        <mat-hint *ngIf="employeeForm.get('role')?.hasError('required')"
+          >Stanowisko jest wymagane.</mat-hint
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="fill" class="selectTeamFormField">
+        <mat-label>Zespół</mat-label>
+        <mat-select
+          formControlName="teamId"
+          required
+          [(ngModel)]="data.defaultTeam"
+        >
+          <mat-option *ngFor="let team of teams" [value]="team.id">
+            {{ team.name }}
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="employeeForm.get('teamId')?.hasError('required')"
+          >Zespół jest wymagany.</mat-hint
+        >
+      </mat-form-field>
+    </div>
+  </form>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Anuluj</button>
+    <button mat-raised-button type="button" (click)="onSubmit()">
+      Zatwierdź
+    </button>
+  </div>
+</div>

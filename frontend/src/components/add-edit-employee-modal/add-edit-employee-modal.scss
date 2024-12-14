@@ -1,0 +1,24 @@
+$gap: 24px;
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+.form-group {
+  display: flex;
+  gap: $gap;
+}
+
+.mat-dialog-content {
+  padding: $gap;
+}
+
+mat-form-field {
+  width: 50%;
+}
+
+.selectTeamFormField {
+  width: 100%;
+}

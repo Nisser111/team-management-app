@@ -10,6 +10,7 @@ import { DeleteConfirmModalComponent } from "../delete-confirm-modal/delete-conf
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 import { EmployeesService } from "../../services/employees.service";
+import { AddEditEmployeeModalComponent } from "../add-edit-employee-modal/add-edit-employee-modal.component";
 
 @Component({
   selector: "app-team-section",
@@ -104,7 +105,13 @@ import { EmployeesService } from "../../services/employees.service";
         </p>
       </div>
 
-      <button mat-button class="add-new-employee-btn">Dodaj pracownika</button>
+      <button
+        mat-button
+        class="add-new-employee-btn"
+        (click)="openAddEmployeeModal()"
+      >
+        Dodaj pracownika
+      </button>
     </section>
   `,
   styleUrls: ["../../styles/employees-tables.scss"],
@@ -131,7 +138,8 @@ export class TeamSectionComponent {
     private teamService: TeamService,
     private employeesService: EmployeesService,
     private dialog: MatDialog,
-    private addEditTeamsDialog: MatDialog
+    private addEditTeamsDialog: MatDialog,
+    private addEditEmployeeModal: MatDialog
   ) {}
 
   // Employees
@@ -142,6 +150,53 @@ export class TeamSectionComponent {
 
   moveEmployee(employee: Employee) {
     // Implement move logic here
+  }
+
+  /**
+   * Opens a modal to add a new employee to the team.
+   * This method initializes a dialog with the AddEditEmployeeModalComponent,
+   * passing the team name and ID as data. It then subscribes to the dialog's
+   * afterClosed event to handle the result, which is the new employee data.
+   * If the result is not null or undefined, it calls the addNewEmployee method
+   * to add the new employee to the local employees array and optionally to the backend.
+   */
+  openAddEmployeeModal(): void {
+    const dialogRef = this.dialog.open(AddEditEmployeeModalComponent, {
+      width: "400px",
+      data: {
+        dialogTitle: "Dodaj nowego pracownika do " + this.teamName,
+        defaultTeam: this.teamId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: Employee) => {
+      if (result) {
+        this.addNewEmployee(result);
+      }
+    });
+  }
+
+  /**
+   * Adds a new employee to the local employees array and optionally to the backend.
+   * This method takes a new employee object as a parameter and adds it to the
+   * local employees array. It also calls the EmployeesService to add the new
+   * employee to the backend, logging the response or error to the console.
+   *
+   * @param newEmployee The Employee object to be added.
+   */
+  addNewEmployee(newEmployee: Employee): void {
+    // Add the new employee to the employees array
+    this.employees.push(newEmployee);
+
+    // Optionally, you can also call a service to save the new employee to the backend
+    this.employeesService.addNew(newEmployee).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (err) => {
+        console.error("Error adding employee:", err);
+      },
+    });
   }
 
   /**
