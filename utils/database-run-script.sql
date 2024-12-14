@@ -18,7 +18,7 @@ CREATE TABLE
         hire_date date,
         role varchar(50),
         team_id int,
-        FOREIGN KEY (team_id) REFERENCES teams (ID)
+        FOREIGN KEY (team_id) REFERENCES teams (ID) ON DELETE CASCADE
     );
 
 -- CREATE TABLE
