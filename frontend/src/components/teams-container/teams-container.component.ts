@@ -15,6 +15,7 @@ import { EmployeesService } from "../../services/employees.service";
     <div *ngFor="let team of filteredTeams">
       <app-team-section
         [teamName]="team.name"
+        [teamId]="team.id"
         [employees]="getEmployeesByTeamId(team.id)"
       ></app-team-section>
     </div>

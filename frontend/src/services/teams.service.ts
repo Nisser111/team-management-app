@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Team } from "../interfaces/Team.interface";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -55,9 +56,19 @@ export class TeamService {
    * @param id - The ID of the team to be deleted.
    * @returns An Observable that resolves to void.
    */
-  deleteTeam(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/teams/${id}`, {
-      headers: { "Content-Type": "application/json" },
-    });
+  deleteTeam(id: number): Observable<any> {
+    return this.http
+      .delete(`${this.apiUrl}/teams/${id}`, { responseType: "text" })
+      .pipe(
+        map((response: string) => {
+          try {
+            // Attempt to parse plain text as JSON
+            return JSON.parse(response);
+          } catch (error) {
+            // If not JSON, return plain text
+            return { message: response };
+          }
+        })
+      );
   }
 }

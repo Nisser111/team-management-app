@@ -1,10 +1,11 @@
 import { Component, Input } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgIf } from "@angular/common";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { Employee } from "../../interfaces/Employee.interface";
 import { EmployeeOptionsListComponent } from "../employee-options-list/employee-options-list.component";
 import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.component";
+import { TeamService } from "../../services/teams.service";
 
 @Component({
   selector: "app-team-section",
@@ -16,9 +17,10 @@ import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.co
     MatButton,
     EmployeeOptionsListComponent,
     TeamMenuButtonComponent,
+    NgIf,
   ],
   template: `
-    <section class="team">
+    <section class="team" [attr.data-team-id]="teamId" *ngIf="showComponent">
       <header>
         <h3>
           {{ teamName }}
@@ -104,7 +106,23 @@ import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.co
 })
 export class TeamSectionComponent {
   @Input() teamName: string = "";
+  @Input() teamId: number = -1;
   @Input() employees: Employee[] = [];
+
+  showComponent: boolean = true;
+
+  displayedColumns: string[] = [
+    "id",
+    "firstName",
+    "lastName",
+    "email",
+    "phone",
+    "hireDate",
+    "role",
+    "options",
+  ];
+
+  constructor(private teamService: TeamService) {}
 
   editEmployee(employee: Employee) {
     // Implement edit logic here
@@ -124,19 +142,30 @@ export class TeamSectionComponent {
     console.log("Rename action triggered");
   }
 
-  teamDelete() {
-    // Implement delete logic here
-    console.log("Delete action triggered");
-  }
+  /**
+   * Deletes the current team.
+   * This method uses the TeamService to delete the team from the server.
+   * If the deletion is successful, it filters out the deleted team's employees and hides the component.
+   */
+  teamDelete(): void {
+    this.teamService.deleteTeam(this.teamId).subscribe({
+      next: (response) => {
+        if (response.message) {
+          console.log(response.message); // Handle success message
+        } else {
+          console.log(response); // Handle other responses
+        }
 
-  displayedColumns: string[] = [
-    "id",
-    "firstName",
-    "lastName",
-    "email",
-    "phone",
-    "hireDate",
-    "role",
-    "options",
-  ];
+        this.employees = this.employees.filter(
+          (e, index) => e.id !== this.employees[index].id
+        );
+
+        // Hide the component after successful deletion
+        this.showComponent = false;
+      },
+      error: (err) => {
+        console.error("Error deleting team:", err);
+      },
+    });
+  }
 }
