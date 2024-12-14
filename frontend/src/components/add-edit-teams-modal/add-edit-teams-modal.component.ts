@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, Input } from "@angular/core";
 import { MatHint, MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import {
@@ -25,7 +25,7 @@ import {
     <mat-dialog-content>
       <mat-form-field appearance="fill">
         <mat-label>Nazwa</mat-label>
-        <input matInput id="newName" name="newName" />
+        <input matInput id="newName" name="newName" [value]="data.oldName" />
         <mat-hint class="error-message" align="start">{{
           errorMessage
         }}</mat-hint>
@@ -44,7 +44,8 @@ export class AddEditTeamsModalComponent {
   errorMessage: string | null = null;
   constructor(
     public dialogRef: MatDialogRef<AddEditTeamsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { dialogTitle: string }
+    @Inject(MAT_DIALOG_DATA)
+    public data: { dialogTitle: string; oldName: string }
   ) {
     // Set the minimum width of the dialog
     const dialogConfig = new MatDialogConfig();

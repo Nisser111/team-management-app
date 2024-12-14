@@ -58,10 +58,24 @@ export class TeamService {
    * @param team - The updated Team object.
    * @returns An Observable that resolves to the updated Team object.
    */
-  updateTeam(id: string, team: Team): Observable<Team> {
-    return this.http.patch<Team>(`${this.apiUrl}/teams/${id}`, team, {
-      headers: { "Content-Type": "application/json" },
-    });
+  updateTeam(id: number, newName: string): Observable<any> {
+    return this.http
+      .patch(
+        `${this.apiUrl}/teams/${id}`,
+        { name: newName },
+        { responseType: "text" }
+      )
+      .pipe(
+        map((response: string) => {
+          try {
+            // Attempt to parse plain text as JSON
+            return JSON.parse(response);
+          } catch (error) {
+            // If not JSON, return plain text
+            return { message: response };
+          }
+        })
+      );
   }
 
   /**

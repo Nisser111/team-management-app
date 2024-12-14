@@ -8,6 +8,7 @@ import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.co
 import { TeamService } from "../../services/teams.service";
 import { DeleteConfirmModalComponent } from "../delete-confirm-modal/delete-confirm-modal.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 
 @Component({
   selector: "app-team-section",
@@ -30,7 +31,7 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
         </h3>
         <app-team-menu-button
           (rename)="teamRename()"
-          (delete)="confirmDelete()"
+          (delete)="confirmTeamDelete()"
         ></app-team-menu-button>
       </header>
       <div class="table-container">
@@ -125,21 +126,11 @@ export class TeamSectionComponent {
     "options",
   ];
 
-  constructor(private teamService: TeamService, private dialog: MatDialog) {}
-
-  // Show the confirmation modal
-  confirmDelete(): void {
-    const dialogRef = this.dialog.open(DeleteConfirmModalComponent, {
-      data: { textToShow: "Czy napewno checsz usunąć " + this.teamName + "?" },
-    });
-
-    dialogRef.afterClosed().subscribe((result: boolean) => {
-      // Call delete method if confirmed
-      if (result) {
-        this.teamDelete();
-      }
-    });
-  }
+  constructor(
+    private teamService: TeamService,
+    private dialog: MatDialog,
+    private addEditTeamsDialog: MatDialog
+  ) {}
 
   editEmployee(employee: Employee) {
     // Implement edit logic here
@@ -153,10 +144,40 @@ export class TeamSectionComponent {
     // Implement delete logic here
   }
 
-  // New methods to handle rename and delete events
+  /**
+   * Opens a dialog for renaming the team and updates the team name if confirmed.
+   */
   teamRename() {
-    // Implement rename logic here
-    console.log("Rename action triggered");
+    const dialogRef = this.addEditTeamsDialog.open(AddEditTeamsModalComponent, {
+      data: { dialogTitle: "Zmień nazwę zespołu", oldName: this.teamName },
+    });
+
+    /**
+     * Interface to define the structure of the dialog result.
+     * @property confirmed - Indicates if the rename operation was confirmed.
+     * @property newName - The new name for the team.
+     */
+    interface DialogResult {
+      confirmed: boolean;
+      newName: string;
+    }
+
+    dialogRef.afterClosed().subscribe((result: DialogResult) => {
+      if (result.confirmed) {
+        this.teamService.updateTeam(this.teamId, result.newName).subscribe({
+          next: (response) => {
+            if (response.message) {
+              console.log(response.message); // Handle success message
+            } else {
+              console.log(response); // Handle other responses
+            }
+          },
+          error: (err) => {
+            console.error("Error renaming team:", err);
+          },
+        });
+      }
+    });
   }
 
   /**
@@ -183,6 +204,23 @@ export class TeamSectionComponent {
       error: (err) => {
         console.error("Error deleting team:", err);
       },
+    });
+  }
+
+  /**
+   * Opens a confirmation dialog to delete the current team.
+   * If the user confirms, it calls the teamDelete method to delete the team.
+   */
+  confirmTeamDelete(): void {
+    const dialogRef = this.dialog.open(DeleteConfirmModalComponent, {
+      data: { textToShow: "Czy napewno checsz usunąć " + this.teamName + "?" },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      // Call delete method if confirmed
+      if (result) {
+        this.teamDelete();
+      }
     });
   }
 }
