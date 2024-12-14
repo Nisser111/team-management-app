@@ -4,7 +4,7 @@ import { CommonModule } from "@angular/common";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { Employee } from "../../interfaces/Employee.interface";
 import { EmployeeOptionsListComponent } from "../employee-options-list/employee-options-list.component";
-import { EditTeamNameButtonComponent } from "../edit-team-name-button/edit-team-name-button.component";
+import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.component";
 
 @Component({
   selector: "app-team-section",
@@ -15,7 +15,7 @@ import { EditTeamNameButtonComponent } from "../edit-team-name-button/edit-team-
     MatButtonModule,
     MatButton,
     EmployeeOptionsListComponent,
-    EditTeamNameButtonComponent,
+    TeamMenuButtonComponent,
   ],
   template: `
     <section class="team">
@@ -23,9 +23,10 @@ import { EditTeamNameButtonComponent } from "../edit-team-name-button/edit-team-
         <h3>
           {{ teamName }}
         </h3>
-        <app-edit-team-name-button
-          (edit)="editTeamName()"
-        ></app-edit-team-name-button>
+        <app-team-menu-button
+          (rename)="teamRename()"
+          (delete)="teamDelete()"
+        ></app-team-menu-button>
       </header>
       <div class="table-container">
         <table mat-table [dataSource]="employees" class="mat-elevation-z8">
@@ -105,10 +106,6 @@ export class TeamSectionComponent {
   @Input() teamName: string = "";
   @Input() employees: Employee[] = [];
 
-  editTeamName() {
-    // Implement the logic to edit the team name
-  }
-
   editEmployee(employee: Employee) {
     // Implement edit logic here
   }
@@ -119,6 +116,17 @@ export class TeamSectionComponent {
 
   deleteEmployee(employee: Employee) {
     // Implement delete logic here
+  }
+
+  // New methods to handle rename and delete events
+  teamRename() {
+    // Implement rename logic here
+    console.log("Rename action triggered");
+  }
+
+  teamDelete() {
+    // Implement delete logic here
+    console.log("Delete action triggered");
   }
 
   displayedColumns: string[] = [
