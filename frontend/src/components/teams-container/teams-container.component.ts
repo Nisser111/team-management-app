@@ -6,6 +6,8 @@ import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.com
 import { Team } from "../../interfaces/Team.interface";
 import { TeamService } from "../../services/teams.service";
 import { EmployeesService } from "../../services/employees.service";
+import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-teams-container",
@@ -19,7 +21,7 @@ import { EmployeesService } from "../../services/employees.service";
         [employees]="getEmployeesByTeamId(team.id)"
       ></app-team-section>
     </div>
-    <app-add-new-team-btn></app-add-new-team-btn>
+    <app-add-new-team-btn (click)="addTeam()"></app-add-new-team-btn>
   `,
   styles: [],
 })
@@ -31,12 +33,12 @@ export class TeamsContainerComponent implements OnInit {
 
   constructor(
     private teamService: TeamService,
-    private employeesService: EmployeesService
+    private employeesService: EmployeesService,
+    private addEditTeamsDialog: MatDialog
   ) {}
 
-  ngOnInit() {
-    // Fetch teams
-    this.teamService.getTeams().subscribe({
+  fetchTeams() {
+    return this.teamService.getTeams().subscribe({
       next: (data) => {
         this.teams = data;
         this.filterTeams(); // Filter teams initially
@@ -45,6 +47,11 @@ export class TeamsContainerComponent implements OnInit {
         console.error("Error fetching teams:", error);
       },
     });
+  }
+
+  ngOnInit() {
+    // Fetch teams
+    this.fetchTeams();
 
     // Fetch employees
     this.employeesService.getAll().subscribe({
@@ -81,5 +88,34 @@ export class TeamsContainerComponent implements OnInit {
    */
   getEmployeesByTeamId(teamId: number): Employee[] {
     return this.employees.filter((employee) => employee.teamId === teamId);
+  }
+
+  addTeam() {
+    const dialogRef = this.addEditTeamsDialog.open(AddEditTeamsModalComponent, {
+      data: { dialogTitle: "Dodaj nowy zespół" },
+    });
+
+    interface DialogResult {
+      confirmed: boolean;
+      newName: string;
+    }
+
+    dialogRef.afterClosed().subscribe((result: DialogResult) => {
+      if (result.confirmed) {
+        this.teamService.addTeam(result.newName).subscribe({
+          next: (response) => {
+            if (response.message) {
+              console.log(response.message); // Handle success message
+              this.fetchTeams();
+            } else {
+              console.log(response); // Handle other responses
+            }
+          },
+          error: (err) => {
+            console.error("Error deleting team:", err);
+          },
+        });
+      }
+    });
   }
 }

@@ -1,0 +1,13 @@
+@use "./global-varriables.scss" as *;
+
+mat-dialog-content {
+  min-height: 5em;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.error-message {
+  color: $red;
+}

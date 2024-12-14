@@ -4,6 +4,10 @@ import { Observable } from "rxjs";
 import { Team } from "../interfaces/Team.interface";
 import { map } from "rxjs/operators";
 
+interface AddTeamResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -31,10 +35,20 @@ export class TeamService {
    * @param team - The Team object to be added.
    * @returns An Observable that resolves to the added Team object.
    */
-  addTeam(team: Team): Observable<Team> {
-    return this.http.post<Team>(`${this.apiUrl}/teams`, team, {
-      headers: { "Content-Type": "application/json" },
-    });
+  addTeam(newTeamName: string): Observable<AddTeamResponse> {
+    return this.http
+      .post<AddTeamResponse>(
+        `${this.apiUrl}/teams`,
+        { name: newTeamName },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .pipe(
+        map((response: AddTeamResponse) => {
+          return response;
+        })
+      );
   }
 
   /**
