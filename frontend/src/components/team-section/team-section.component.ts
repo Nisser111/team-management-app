@@ -136,8 +136,7 @@ export class TeamSectionComponent {
     dialogRef.afterClosed().subscribe((result: boolean) => {
       // Call delete method if confirmed
       if (result) {
-        // this.teamDelete();
-        console.log("Removed");
+        this.teamDelete();
       }
     });
   }
