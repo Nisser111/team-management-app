@@ -6,6 +6,8 @@ import { Employee } from "../../interfaces/Employee.interface";
 import { EmployeeOptionsListComponent } from "../employee-options-list/employee-options-list.component";
 import { TeamMenuButtonComponent } from "../team-menu-button/team-menu-button.component";
 import { TeamService } from "../../services/teams.service";
+import { DeleteConfirmModalComponent } from "../delete-confirm-modal/delete-confirm-modal.component";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 
 @Component({
   selector: "app-team-section",
@@ -18,6 +20,7 @@ import { TeamService } from "../../services/teams.service";
     EmployeeOptionsListComponent,
     TeamMenuButtonComponent,
     NgIf,
+    MatDialogModule,
   ],
   template: `
     <section class="team" [attr.data-team-id]="teamId" *ngIf="showComponent">
@@ -27,7 +30,7 @@ import { TeamService } from "../../services/teams.service";
         </h3>
         <app-team-menu-button
           (rename)="teamRename()"
-          (delete)="teamDelete()"
+          (delete)="confirmDelete()"
         ></app-team-menu-button>
       </header>
       <div class="table-container">
@@ -122,7 +125,22 @@ export class TeamSectionComponent {
     "options",
   ];
 
-  constructor(private teamService: TeamService) {}
+  constructor(private teamService: TeamService, private dialog: MatDialog) {}
+
+  // Show the confirmation modal
+  confirmDelete(): void {
+    const dialogRef = this.dialog.open(DeleteConfirmModalComponent, {
+      data: { textToShow: "Czy napewno checsz usunąć " + this.teamName + "?" },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      // Call delete method if confirmed
+      if (result) {
+        // this.teamDelete();
+        console.log("Removed");
+      }
+    });
+  }
 
   editEmployee(employee: Employee) {
     // Implement edit logic here
