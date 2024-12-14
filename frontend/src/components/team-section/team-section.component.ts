@@ -9,6 +9,7 @@ import { TeamService } from "../../services/teams.service";
 import { DeleteConfirmModalComponent } from "../delete-confirm-modal/delete-confirm-modal.component";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
+import { EmployeesService } from "../../services/employees.service";
 
 @Component({
   selector: "app-team-section",
@@ -88,7 +89,7 @@ import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-tea
                 [employee]="element"
                 (edit)="editEmployee($event)"
                 (move)="moveEmployee($event)"
-                (delete)="deleteEmployee($event)"
+                (delete)="confirmEmployeeDelete($event)"
               ></app-employee-options-list>
             </td>
           </ng-container>
@@ -128,9 +129,12 @@ export class TeamSectionComponent {
 
   constructor(
     private teamService: TeamService,
+    private employeesService: EmployeesService,
     private dialog: MatDialog,
     private addEditTeamsDialog: MatDialog
   ) {}
+
+  // Employees
 
   editEmployee(employee: Employee) {
     // Implement edit logic here
@@ -140,9 +144,53 @@ export class TeamSectionComponent {
     // Implement move logic here
   }
 
-  deleteEmployee(employee: Employee) {
-    // Implement delete logic here
+  /**
+   * Deletes an employee by their ID.
+   * This method uses the EmployeesService to delete the employee from the server.
+   * If the deletion is successful, it filters out the deleted employee from the local employees array.
+   *
+   * @param id The ID of the employee to be deleted.
+   */
+  deleteEmployee(id: number) {
+    this.employeesService.deleteById(id).subscribe({
+      next: (response) => {
+        if (response.message) {
+          console.log(response.message); // Handle success message
+
+          // Remove deleted employee from local employees
+          this.employees = this.employees.filter((e) => e.id !== id);
+        } else {
+          console.log(response); // Handle other responses
+        }
+      },
+      error: (err) => {
+        console.error("Error deleting team:", err);
+      },
+    });
   }
+
+  /**
+   * Opens a confirmation dialog to delete an employee.
+   * If the user confirms, it calls the deleteEmployee method to delete the employee.
+   *
+   * @param employee The employee to be deleted.
+   */
+  confirmEmployeeDelete(employee: Employee) {
+    const dialogRef = this.dialog.open(DeleteConfirmModalComponent, {
+      data: {
+        textToShow: `Czy napewno checsz usunąć pracownika ${employee.firstName} ${employee.lastName}?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      // Call delete method if confirmed
+      if (result) {
+        this.deleteEmployee(employee.id);
+      }
+    });
+  }
+
+  // Teams
 
   /**
    * Opens a dialog for renaming the team and updates the team name if confirmed.
