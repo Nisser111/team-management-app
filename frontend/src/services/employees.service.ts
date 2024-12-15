@@ -56,4 +56,20 @@ export class EmployeesService {
       responseType: "text" as "json",
     });
   }
+
+  /**
+   * Edits an existing employee by their ID on the server.
+   *
+   * @param employee The Employee object with updated details.
+   * @returns An Observable of the response from the server, which can be either a JSON object or a plain text message.
+   */
+  editById(employee: Employee): Observable<any> {
+    return this.http.patch<string>(
+      `${this.apiUrl}/employees/${employee.id}`,
+      employee,
+      {
+        responseType: "text" as "json",
+      }
+    );
+  }
 }

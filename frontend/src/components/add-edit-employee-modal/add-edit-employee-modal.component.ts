@@ -10,12 +10,12 @@ import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
-  MatDialogConfig,
   MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
 import { NgForOf, NgIf } from "@angular/common";
 import { createEmployeeForm } from "./employee-form.model";
+import { Employee } from "../../interfaces/Employee.interface";
 
 @Component({
   selector: "app-add-edit-employee-modal",
@@ -40,6 +40,7 @@ import { createEmployeeForm } from "./employee-form.model";
 export class AddEditEmployeeModalComponent implements OnInit {
   employeeForm: FormGroup;
   teams: Team[] = [];
+  currentEmployeeData: Employee;
 
   constructor(
     private fb: FormBuilder,
@@ -47,11 +48,11 @@ export class AddEditEmployeeModalComponent implements OnInit {
     public dialogRef: MatDialogRef<AddEditEmployeeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.employeeForm = createEmployeeForm(this.fb);
-    // Set the minimum width of the dialog
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.minWidth = "1200px";
-    this.dialogRef.updateSize(dialogConfig.minWidth);
+    this.currentEmployeeData = this.data.currentEmployeeData;
+    this.employeeForm = createEmployeeForm(
+      this.fb,
+      this.currentEmployeeData.id
+    );
   }
 
   ngOnInit(): void {

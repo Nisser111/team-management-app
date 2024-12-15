@@ -6,8 +6,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
  * @param fb - The FormBuilder instance.
  * @returns A FormGroup representing the employee form.
  */
-export function createEmployeeForm(fb: FormBuilder): FormGroup {
+export function createEmployeeForm(fb: FormBuilder, id: number): FormGroup {
   return fb.group({
+    id,
     firstName: [
       "",
       [Validators.required, Validators.minLength(2), Validators.maxLength(50)],

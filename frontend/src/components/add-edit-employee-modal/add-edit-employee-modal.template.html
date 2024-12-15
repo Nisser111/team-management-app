@@ -4,7 +4,12 @@
     <div class="form-group">
       <mat-form-field appearance="fill">
         <mat-label>Imię</mat-label>
-        <input matInput formControlName="firstName" required />
+        <input
+          matInput
+          formControlName="firstName"
+          required
+          [(ngModel)]="currentEmployeeData.firstName"
+        />
         <mat-hint *ngIf="employeeForm.get('firstName')?.hasError('required')"
           >Imię jest wymagane.</mat-hint
         >
@@ -18,7 +23,12 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Nazwisko</mat-label>
-        <input matInput formControlName="lastName" required />
+        <input
+          matInput
+          formControlName="lastName"
+          required
+          [(ngModel)]="currentEmployeeData.lastName"
+        />
         <mat-hint *ngIf="employeeForm.get('lastName')?.hasError('required')"
           >Nazwisko jest wymagane.</mat-hint
         >
@@ -34,7 +44,12 @@
     <div class="form-group">
       <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" required />
+        <input
+          matInput
+          formControlName="email"
+          required
+          [(ngModel)]="currentEmployeeData.email"
+        />
         <mat-hint *ngIf="employeeForm.get('email')?.hasError('required')"
           >Email jest wymagany.</mat-hint
         >
@@ -45,7 +60,12 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Telefon</mat-label>
-        <input matInput formControlName="phone" required />
+        <input
+          matInput
+          formControlName="phone"
+          required
+          [(ngModel)]="currentEmployeeData.phone"
+        />
         <mat-hint *ngIf="employeeForm.get('phone')?.hasError('required')"
           >Telefon jest wymagany.</mat-hint
         >
@@ -58,7 +78,13 @@
     <div class="form-group">
       <mat-form-field appearance="fill">
         <mat-label>Data zatrudnienia</mat-label>
-        <input matInput type="date" formControlName="hireDate" required />
+        <input
+          matInput
+          type="date"
+          formControlName="hireDate"
+          required
+          [(ngModel)]="currentEmployeeData.hireDate"
+        />
         <mat-hint *ngIf="employeeForm.get('hireDate')?.hasError('required')"
           >Data zatrudnienia jest wymagana.</mat-hint
         >
@@ -66,7 +92,12 @@
 
       <mat-form-field appearance="fill">
         <mat-label>Stanowisko</mat-label>
-        <input matInput formControlName="role" required />
+        <input
+          matInput
+          formControlName="role"
+          required
+          [(ngModel)]="currentEmployeeData.role"
+        />
         <mat-hint *ngIf="employeeForm.get('role')?.hasError('required')"
           >Stanowisko jest wymagane.</mat-hint
         >

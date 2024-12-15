@@ -88,8 +88,7 @@ import { AddEditEmployeeModalComponent } from "../add-edit-employee-modal/add-ed
             <td mat-cell *matCellDef="let element">
               <app-employee-options-list
                 [employee]="element"
-                (edit)="editEmployee($event)"
-                (move)="moveEmployee($event)"
+                (edit)="openEditEmployeeModal($event)"
                 (delete)="confirmEmployeeDelete($event)"
               ></app-employee-options-list>
             </td>
@@ -138,18 +137,55 @@ export class TeamSectionComponent {
     private teamService: TeamService,
     private employeesService: EmployeesService,
     private dialog: MatDialog,
-    private addEditTeamsDialog: MatDialog,
-    private addEditEmployeeModal: MatDialog
+    private addEditTeamsDialog: MatDialog
   ) {}
 
   // Employees
 
-  editEmployee(employee: Employee) {
-    // Implement edit logic here
+  /**
+   * Opens a modal to edit an existing employee's data.
+   * This method initializes a dialog with the AddEditEmployeeModalComponent,
+   * passing the employee's data, team ID, and edit mode as data. It then subscribes
+   * to the dialog's afterClosed event to handle the result, which is the edited
+   * employee data. If the result is not null or undefined, it calls the editEmployee
+   * method to update the employee's data.
+   *
+   * @param employee The Employee object to be edited.
+   */
+  openEditEmployeeModal(employee: Employee): void {
+    const dialogRef = this.dialog.open(AddEditEmployeeModalComponent, {
+      data: {
+        dialogTitle: `Edytuj dane pracownika ${employee.firstName} ${employee.lastName}`,
+        defaultTeam: this.teamId,
+        isEditMode: true,
+        currentEmployeeData: employee,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: Employee) => {
+      if (result) {
+        this.editEmployee(result);
+      }
+    });
   }
 
-  moveEmployee(employee: Employee) {
-    // Implement move logic here
+  /**
+   * Updates an existing employee's data.
+   * This method takes an updated employee object as a parameter and calls the
+   * EmployeesService to update the employee's data on the server. It logs the
+   * response or error to the console.
+   *
+   * @param employee The Employee object with updated details.
+   */
+  editEmployee(employee: Employee) {
+    this.employeesService.editById(employee).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (err) => {
+        console.error("Error editing employee:", err);
+      },
+    });
   }
 
   /**
@@ -162,10 +198,10 @@ export class TeamSectionComponent {
    */
   openAddEmployeeModal(): void {
     const dialogRef = this.dialog.open(AddEditEmployeeModalComponent, {
-      width: "400px",
       data: {
         dialogTitle: "Dodaj nowego pracownika do " + this.teamName,
         defaultTeam: this.teamId,
+        isEditMode: false,
       },
     });
 
