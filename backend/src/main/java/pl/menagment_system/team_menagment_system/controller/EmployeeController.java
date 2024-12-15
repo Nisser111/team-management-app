@@ -42,20 +42,6 @@ public class EmployeeController {
 
         return employeeRepository.findAll();
     }
-    /**
-     * Retrieves all employees associated with a specified team ID.
-     *
-     * @param teamId the ID of the team for which to retrieve employees
-     * @return a ResponseEntity containing the list of employees if found, or an error message if no employees are found for the given team ID
-     */
-    @GetMapping("/team/{teamId}")
-    public ResponseEntity<?> getAllEmployees(@PathVariable int teamId) {
-        List<Employee> employees = employeeRepository.findByTeamId(teamId);
-        if (employees == null || employees.isEmpty()) {
-            return ResponseEntity.status(404).body("No employees found for team ID " + teamId + ".");
-        }
-        return ResponseEntity.ok(employees);
-    }
 
     /**
      * Deletes an employee based on the provided ID.

@@ -1,4 +1,4 @@
-CREATE DATABASE management_system;
+CREATE DATABASE menagement_system;
 
 USE management_system;
 
