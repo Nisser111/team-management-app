@@ -142,7 +142,9 @@ public class EmployeeController {
                 existingEmployee.setLastName(employeeRequestDTO.getLastName());
             }
             if (employeeRequestDTO.getEmail() != null) {
-                employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail()); // Validation
+                if(!employeeRequestDTO.getEmail().equalsIgnoreCase(existingEmployee.getEmail())) {
+                    employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail()); // Validation
+                }
                 existingEmployee.setEmail(employeeRequestDTO.getEmail());
             }
             if (employeeRequestDTO.getPhone() != null) {
