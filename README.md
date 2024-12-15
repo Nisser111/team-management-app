@@ -13,6 +13,13 @@ This project is a full-stack application for managing teams, built using Angular
 ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
 
+## Future of project
+
+ - [ ] Authorization (JWT)
+ - [ ] Drag and drop on moving employee between teams
+ - [ ] Add autoreload after modeling content
+ - [ ] Provide unit tests
+
 ## Table of Contents
 
 1. **Getting Started**
