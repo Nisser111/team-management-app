@@ -1,8 +1,34 @@
-
-
 # Getting Started with the Team Management API
 
 This is the guide to help you quickly set up, run, and interact with the Team anagement API, which provides functionalities to manage teams in the system. The API supports CRUD operations, enabling clients to retrieve, create, update, and delete team entities.
+
+--- 
+
+# Table of Contents
+
+1. **Getting started**
+   
+   - [Requirements](#requirements)
+   - [Setup Instructions](#setup-instructions)
+     - [Clone the Repository](#1-clone-the-repository)
+     - [Configure the Database](#2-configure-the-database)
+     - [Build the Project](#3-build-the-project)
+     - [Run the Application](#4-run-the-application)
+   - [Database Configuration](#2-Database-configuration).
+
+2. **Employee management endpoints**
+   
+   - [Get All Employees](#get-all-employees)
+   - [Add New Employee](#add-new-employee)
+   - [Update Employee](#update-employee)
+   - [Delete Employee](#delete-employee)
+
+3. **Team management endpoints**
+   
+   - [Get All Teams](#get-all-teams)
+   - [Add New Team](#add-new-team)
+   - [Update Team](#update-team)
+   - [Delete Team](#delete-team)
 
 ---
 
@@ -37,9 +63,9 @@ cd team-management-api/backend
 
 ### 2. Configure the database
 
-- Create a new database `menagement_system`. Use database run script:
+- Create a new database `menagement_system` by [following instructions](#2-Database-Configuration).
   
-  [Database-run-script](https://github.com/Nisser111/team-menagement-app/blob/main/utils/database-run-script.sql)
+  
 
 - Update the database configurations in your `application.properties` 
   file located at `src/main/resources/`. Example:
@@ -70,9 +96,99 @@ mvn spring-boot:run
 
 The application will run on the default port **8080** unless otherwise specified in the `application.properties`.
 
+---
 
+## Database Configuration
 
+The **Management System** API interacts with a MySQL database. Below is the database schema and example data to set up the database.
 
+---
+
+#### Database Name
+
+`management_system`
+
+---
+
+Import database script: [Database-run-script](https://github.com/Nisser111/team-menagement-app/blob/main/utils/database-run-script.sql)
+
+---
+
+#### Tables Overview
+
+1. **`teams` Table**
+   
+   - Stores information about teams within the organization.
+   
+   **Schema**:
+   
+   | Column Name | Data Type     | Constraints                 |
+   | ----------- | ------------- | --------------------------- |
+   | `ID`        | `int`         | Primary Key, Auto Increment |
+   | `name`      | `varchar(75)` | Not Null                    |
+
+2. **`employees` Table**
+   
+   - Stores information about employees and their association with teams.
+   
+   **Schema**:
+   
+   | Column Name  | Data Type      | Constraints                        |
+   | ------------ | -------------- | ---------------------------------- |
+   | `ID`         | `int`          | Primary Key, Auto Increment        |
+   | `first_name` | `varchar(50)`  | Not Null                           |
+   | `last_name`  | `varchar(50)`  | Not Null                           |
+   | `email`      | `varchar(100)` | Not Null, Unique                   |
+   | `phone`      | `varchar(15)`  | Optional                           |
+   | `hire_date`  | `date`         | Not Null                           |
+   | `role`       | `varchar(50)`  | Not Null                           |
+   | `team_id`    | `int`          | Foreign Key References `teams(ID)` |
+   
+   **Relationships**:
+   
+   - `team_id`: Foreign key referencing the `teams` table. If a team is deleted, associated employees will also be removed (`ON DELETE CASCADE`).
+
+---
+
+#### Example Data
+
+**Teams Table**:
+
+| `ID` | `name`           |
+| ---- | ---------------- |
+| 1    | Development Team |
+| 2    | Marketing Team   |
+| 3    | Sales Team       |
+| 4    | HR Team          |
+| 5    | Design Team      |
+
+**Employees Table**:
+
+| `ID` | `first_name` | `last_name` | `email`                   | `phone`      | `hire_date` | `role`               | `team_id` |
+| ---- | ------------ | ----------- | ------------------------- | ------------ | ----------- | -------------------- | --------- |
+| 1    | John         | Doe         | john.doe@example.com      | 123-456-7890 | 2023-01-15  | Developer            | 1         |
+| 2    | Jane         | Smith       | jane.smith@example.com    | 234-567-8901 | 2023-02-20  | Marketing Specialist | 2         |
+| 3    | Emily        | Johnson     | emily.johnson@example.com | 345-678-9012 | 2023-03-10  | Sales Associate      | 3         |
+| 4    | Michael      | Brown       | michael.brown@example.com | 456-789-0123 | 2023-04-05  | HR Manager           | 4         |
+| 5    | Sarah        | Davis       | sarah.davis@example.com   | 567-890-1234 | 2023-05-12  | UI/UX Designer       | 5         |
+
+---
+
+#### Admin User
+
+An administrator user is created for managing the database. Below are its credentials:
+
+- **Username**: `admin`
+- **Authentication**: MySQL Native Password
+- **Privileges**: Full privileges across all tables with no restrictions.
+
+```sql
+CREATE USER 'admin'@'%' IDENTIFIED VIA mysql_native_password USING 'QEC8u';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' 
+REQUIRE NONE WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+```
+
+---
 
 # Get all Employees
 
@@ -902,3 +1018,5 @@ java -jar target/team-management-api.jar
 
 3. Ensure the application is connected to a production-ready database 
    with proper configurations.
+
+

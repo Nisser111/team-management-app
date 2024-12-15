@@ -1,6 +1,6 @@
 CREATE DATABASE menagement_system;
 
-USE management_system;
+USE menagement_system;
 
 CREATE TABLE
     teams (
@@ -21,14 +21,7 @@ CREATE TABLE
         FOREIGN KEY (team_id) REFERENCES teams (ID) ON DELETE CASCADE
     );
 
--- CREATE TABLE
---     avatars (
---         employe_ID int primary key,
---         path varchar(255),
---         FOREIGN KEY (employe_ID) REFERENCES employees (ID) ON DELETE CASCADE
---     );
 -- Example values
-
 INSERT INTO
     teams (name)
 VALUES
@@ -95,7 +88,7 @@ VALUES
         5
     );
 
--- admin
+-- add admin user
 CREATE USER 'admin'@'%' IDENTIFIED VIA mysql_native_password USING 'QEC8u';
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' 
 REQUIRE NONE WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
