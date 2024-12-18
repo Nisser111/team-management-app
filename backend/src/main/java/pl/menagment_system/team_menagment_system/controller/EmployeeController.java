@@ -53,21 +53,21 @@ public class EmployeeController {
             if (employees.isEmpty()) {
                 // Build not found error response
                 response.put("success", true);
-                response.put("message", "No employees found.");
+                response.put("message", "Nie znaleziono pracowników.");
                 response.put("data", employees);
                 return ResponseEntity.ok(response);
             }
 
             // Build success response
             response.put("success", true);
-            response.put("message", "Employees retrieved successfully.");
+            response.put("message", "Pracownicy zostali pomyślnie pobrani.");
             response.put("data", employees);
             return ResponseEntity.ok(response);
 
         } catch (Exception ex) {
             // Build unexpected error response
             response.put("success", false);
-            response.put("message", "Unexpected error occurred.");
+            response.put("message", "Wystąpił nieoczekiwany błąd.");
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -92,20 +92,20 @@ public class EmployeeController {
 
             if (rowsAffected > 0) {
                 // Build success response
-                response.put("message", "Employee " + fullName + " has been deleted.");
+                response.put("message", "Pracownik " + fullName + " został usunięty.");
                 response.put("success", true);
                 response.put("data", deletedEmployee.get());
                 return ResponseEntity.ok(response);
             } else {
                 // Build not found error response
-                response.put("message", "Employee with ID " + id + " not found.");
+                response.put("message", "Nie znaleziono pracownika o identyfikatorze " + id + ".");
                 response.put("success", false);
                 return ResponseEntity.status(404).body(response);
             }
         } catch (Exception ex) {
             // Build unexpected error response
             response.put("success", false);
-            response.put("message", "Unexpected error occurred.");
+            response.put("message", "Wystąpił nieoczekiwany błąd.");
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -144,7 +144,7 @@ public class EmployeeController {
 
             // Build success response
             response.put("success", true);
-            response.put("message", "Employee " + fullName + " has been added.");
+            response.put("message", "Pracownik " + fullName + " został dodany.");
             response.put("data", employee);
             return ResponseEntity.ok(response);
 
@@ -156,7 +156,7 @@ public class EmployeeController {
         } catch (Exception ex) {
             // Build unexpected error response
             response.put("success", false);
-            response.put("message", "Unexpected error occurred.");
+            response.put("message", "Wystąpił nieoczekiwany błąd.");
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -182,7 +182,7 @@ public class EmployeeController {
             if (existingEmployeeOptional.isEmpty()) {
                 // Build a response for not found
                 response.put("success", false);
-                response.put("message", "Employee with ID " + id + " not found.");
+                response.put("message", "Nie znaleziono pracownika o identyfikatorze " + id + ".");
                 return ResponseEntity.status(404).body(response);
             }
 
@@ -218,7 +218,7 @@ public class EmployeeController {
             employeeRepository.update(existingEmployee);
 
             response.put("success", true);
-            response.put("message", "Employee "+ fullName + " updated successfully.");
+            response.put("message", "Pracownik "+ fullName + " został pomyślnie zaktualizowany.");
             response.put("data", existingEmployee);
             return ResponseEntity.ok(response);
 
@@ -230,7 +230,7 @@ public class EmployeeController {
         } catch (Exception ex) {
             // Handle unexpected errors
             response.put("success", false);
-            response.put("message", "Unexpected error occurred.");
+            response.put("message", "Wystąpił nieoczekiwany błąd.");
             return ResponseEntity.status(500).body(response);
         }
     }
