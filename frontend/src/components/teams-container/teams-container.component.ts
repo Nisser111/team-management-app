@@ -8,8 +8,7 @@ import { TeamService } from "../../services/teams.service";
 import { EmployeesService } from "../../services/employees.service";
 import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { apiErrorHandler } from "./apiErrorHandler";
+import { CommunicationService } from "../../services/communication.service";
 
 @Component({
   selector: "app-teams-container",
@@ -37,8 +36,7 @@ export class TeamsContainerComponent implements OnInit {
     private teamService: TeamService,
     private employeesService: EmployeesService,
     private addEditTeamsDialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private errorDialogComponent: MatDialog
+    private communicationService: CommunicationService
   ) {}
 
   fetchTeams() {
@@ -50,20 +48,7 @@ export class TeamsContainerComponent implements OnInit {
         this.filterTeams(); // Filter teams initially
       },
       error: (e) => {
-        const {
-          error: { error: success },
-        } = e;
-
-        if (success === undefined) {
-          apiErrorHandler(
-            { message: "Cos poszło nie tak. Przepraszamy za utrudnienia." },
-            this.snackBar,
-            this.errorDialogComponent
-          );
-          return;
-        }
-
-        apiErrorHandler(e.error, this.snackBar, this.errorDialogComponent);
+        this.communicationService.showError(e);
       },
     });
   }
@@ -123,12 +108,9 @@ export class TeamsContainerComponent implements OnInit {
       if (result.confirmed) {
         this.teamService.addTeam(result.newName).subscribe({
           next: (response) => {
-            if (response.message) {
-              console.log(response.message); // Handle success message
-              this.fetchTeams();
-            } else {
-              console.log(response); // Handle other responses
-            }
+            const { message } = response;
+            this.communicationService.showInfo(message);
+            this.fetchTeams();
           },
           error: (err) => {
             console.error("Error deleting team:", err);

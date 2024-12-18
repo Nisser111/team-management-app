@@ -11,6 +11,7 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 import { EmployeesService } from "../../services/employees.service";
 import { AddEditEmployeeModalComponent } from "../add-edit-employee-modal/add-edit-employee-modal.component";
+import { CommunicationService } from "../../services/communication.service";
 
 @Component({
   selector: "app-team-section",
@@ -137,7 +138,8 @@ export class TeamSectionComponent {
     private teamService: TeamService,
     private employeesService: EmployeesService,
     private dialog: MatDialog,
-    private addEditTeamsDialog: MatDialog
+    private addEditTeamsDialog: MatDialog,
+    private communicationService: CommunicationService
   ) {}
 
   // Employees
@@ -305,14 +307,11 @@ export class TeamSectionComponent {
       if (result.confirmed) {
         this.teamService.updateTeam(this.teamId, result.newName).subscribe({
           next: (response) => {
-            if (response.message) {
-              console.log(response.message); // Handle success message
-            } else {
-              console.log(response); // Handle other responses
-            }
+            const { message } = response;
+            this.communicationService.showInfo(message);
           },
           error: (err) => {
-            console.error("Error renaming team:", err);
+            this.communicationService.showError(err);
           },
         });
       }
@@ -327,11 +326,8 @@ export class TeamSectionComponent {
   teamDelete(): void {
     this.teamService.deleteTeam(this.teamId).subscribe({
       next: (response) => {
-        if (response.message) {
-          console.log(response.message); // Handle success message
-        } else {
-          console.log(response); // Handle other responses
-        }
+        const { message } = response;
+        this.communicationService.showInfo(message);
 
         this.employees = this.employees.filter(
           (e, index) => e.id !== this.employees[index].id
@@ -341,7 +337,7 @@ export class TeamSectionComponent {
         this.showComponent = false;
       },
       error: (err) => {
-        console.error("Error deleting team:", err);
+        this.communicationService.showError(err);
       },
     });
   }
