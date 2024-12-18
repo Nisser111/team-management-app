@@ -9,7 +9,9 @@ import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.repository.EmployeeRepository;
 import pl.menagment_system.team_menagment_system.services.EmployeeService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,45 +34,97 @@ public class EmployeeController {
         this.employeeService = new EmployeeService(employeeRepository);
     }
 
+
     /**
-     * Retrieves all employees from the repository.
+     * Retrieves all employees from the repository and returns a response containing the result.
+     * The response includes employees if found, or appropriate error messages in case of failure.
      *
-     * @return a list of all employees
+     * @return ResponseEntity containing a Map with the following keys:
+     *         - "success": a boolean indicating whether the operation was successful
+     *         - "message": a string describing the operation status
+     *         - "data": a list of Employee objects if available, or an empty list otherwise.
      */
     @GetMapping
-    public List<Employee> getAllEmployees() {
+    public ResponseEntity<Map<String, Object>> getAllEmployees() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Employee> employees = employeeRepository.findAll();
 
-        return employeeRepository.findAll();
-    }
+            if (employees.isEmpty()) {
+                // Build not found error response
+                response.put("success", true);
+                response.put("message", "No employees found.");
+                response.put("data", employees);
+                return ResponseEntity.ok(response);
+            }
 
-    /**
-     * Deletes an employee based on the provided ID.
-     *
-     * @param id the ID of the employee to be deleted
-     * @return a ResponseEntity containing a success message if the employee was deleted,
-     *         or an error message if the employee with the given ID was not found
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
-        int rowsAffected = employeeRepository.deleteById(id);
-        if (rowsAffected > 0) {
-            return ResponseEntity.ok("Employee with ID " + id + " has been deleted.");
-        } else {
-            return ResponseEntity.status(404).body("Employee with ID " + id + " not found.");
+            // Build success response
+            response.put("success", true);
+            response.put("message", "Employees retrieved successfully.");
+            response.put("data", employees);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception ex) {
+            // Build unexpected error response
+            response.put("success", false);
+            response.put("message", "Unexpected error occurred.");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
     /**
-     * Adds a new employee to the system based on the provided EmployeeRequestDTO.
-     * Handles validation and ensures email uniqueness before saving the employee.
+     * Deletes an employee identified by the given ID from the repository.
+     * If the employee is successfully deleted, the response will contain
+     * the employee details and a success message. If not found, a 404 error
+     * message is returned. In case of any unexpected error, a 500 error response is returned.
      *
-     * @param dto the EmployeeRequestDTO object containing details of the employee to be added
-     * @return ResponseEntity containing a success message if the operation is successful,
-     *         or an error message with an appropriate HTTP status code in case of failure
+     * @param id the unique identifier of the employee to be deleted
+     * @return a ResponseEntity containing success information,
+     *         the employee data if deletion is successful, or an error message otherwise
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteEmployee(@PathVariable int id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Optional<Employee> deletedEmployee = employeeRepository.findById(id);
+            String fullName = deletedEmployee.get().getFirstName() + " " + deletedEmployee.get().getLastName();
+            int rowsAffected = employeeRepository.deleteById(id);
+
+            if (rowsAffected > 0) {
+                // Build success response
+                response.put("message", "Employee " + fullName + " has been deleted.");
+                response.put("success", true);
+                response.put("data", deletedEmployee.get());
+                return ResponseEntity.ok(response);
+            } else {
+                // Build not found error response
+                response.put("message", "Employee with ID " + id + " not found.");
+                response.put("success", false);
+                return ResponseEntity.status(404).body(response);
+            }
+        } catch (Exception ex) {
+            // Build unexpected error response
+            response.put("success", false);
+            response.put("message", "Unexpected error occurred.");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    /**
+     * Adds a new employee to the system after validating the provided data.
+     * The email of the employee must be unique, and the request data must meet the validation constraints.
+     *
+     * @param dto The EmployeeRequestDTO containing the necessary details of the employee to be added.
+     *            This includes first name, last name, email, phone, hire date, role, and team ID.
+     * @return A ResponseEntity containing a Map with the operation's status, a message, and the added employee object if successful.
+     *         If there's a validation error, it returns a 400 status with an error message.
+     *         If there's an unexpected error, it returns a 500 status with an error message.
      */
     @PostMapping
-    public ResponseEntity<String> addEmployee(@Validated(EmployeeRequestDTO.Create.class) @RequestBody EmployeeRequestDTO dto) {
+    public ResponseEntity<Map<String, Object>> addEmployee(
+            @Validated(EmployeeRequestDTO.Create.class) @RequestBody EmployeeRequestDTO dto) {
+        Map<String, Object> response = new HashMap<>();
         try {
+            // Validate uniqueness of email
             employeeService.validateEmailUniqueness(dto.getEmail());
 
             Employee employee = new Employee(
@@ -84,40 +138,54 @@ public class EmployeeController {
                     dto.getTeamId()
             );
 
-            // Save Employee
+            String fullName = employee.getFirstName() + " " + employee.getLastName();
             employeeRepository.save(employee);
 
-            return ResponseEntity.ok("New employee has been added successfully.");
+
+            // Build success response
+            response.put("success", true);
+            response.put("message", "Employee " + fullName + " has been added.");
+            response.put("data", employee);
+            return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(400).body(ex.getMessage());
+            // Build validation error response
+            response.put("success", false);
+            response.put("message", ex.getMessage());
+            return ResponseEntity.status(400).body(response);
         } catch (Exception ex) {
-            return ResponseEntity.status(500).body("Unexpected error occurred.");
+            // Build unexpected error response
+            response.put("success", false);
+            response.put("message", "Unexpected error occurred.");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
 
     /**
-     * Updates an existing employee's details based on the provided ID and the updated fields in the request body.
-     * Only fields that are provided in the input will be updated.
+     * Updates an existing employee's details based on the given information.
+     * Only the provided fields in the request will be updated.
      *
      * @param id The ID of the employee to be updated.
-     * @param employeeRequestDTO The data transfer object containing the employee's updated details.
-     * @return A ResponseEntity containing a message and an appropriate HTTP status code:
-     *         - 200 OK if the update is successful.
-     *         - 404 Not Found if the employee with the given ID does not exist.
-     *         - 400 Bad Request if there is an issue with the input data.
-     *         - 500 Internal Server Error if an unexpected error occurs.
+     * @param employeeRequestDTO The data transfer object containing the employee details to be updated.
+     * @return A ResponseEntity containing a map with the operation result, including success status, message,
+     *         and updated employee data in case of success.
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(
+    public ResponseEntity<Map<String, Object>> updateEmployee(
             @PathVariable("id") int id,
             @RequestBody @Validated(EmployeeRequestDTO.Update.class) EmployeeRequestDTO employeeRequestDTO) {
+        Map<String, Object> response = new HashMap<>();
         try {
             Optional<Employee> existingEmployeeOptional = employeeRepository.findById(id);
 
             if (existingEmployeeOptional.isEmpty()) {
-                return ResponseEntity.status(404).body("Employee not found");
+                // Build a response for not found
+                response.put("success", false);
+                response.put("message", "Employee with ID " + id + " not found.");
+                return ResponseEntity.status(404).body(response);
             }
+
             Employee existingEmployee = existingEmployeeOptional.get();
 
             // Check each field and update only if provided
@@ -128,8 +196,8 @@ public class EmployeeController {
                 existingEmployee.setLastName(employeeRequestDTO.getLastName());
             }
             if (employeeRequestDTO.getEmail() != null) {
-                if(!employeeRequestDTO.getEmail().equalsIgnoreCase(existingEmployee.getEmail())) {
-                    employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail()); // Validation
+                if (!employeeRequestDTO.getEmail().equalsIgnoreCase(existingEmployee.getEmail())) {
+                    employeeService.validateEmailUniqueness(employeeRequestDTO.getEmail()); // Validate unique email
                 }
                 existingEmployee.setEmail(employeeRequestDTO.getEmail());
             }
@@ -146,14 +214,24 @@ public class EmployeeController {
                 existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
             }
 
-            // Save updated employee object
+            String fullName = existingEmployee.getFirstName() + " " + existingEmployee.getLastName();
             employeeRepository.update(existingEmployee);
 
-            return ResponseEntity.ok("Employee updated successfully.");
+            response.put("success", true);
+            response.put("message", "Employee "+ fullName + " updated successfully.");
+            response.put("data", existingEmployee);
+            return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(400).body(ex.getMessage());
+            // Handle validation error
+            response.put("success", false);
+            response.put("message", ex.getMessage());
+            return ResponseEntity.status(400).body(response);
         } catch (Exception ex) {
-            return ResponseEntity.status(500).body("An unexpected error occurred.");
+            // Handle unexpected errors
+            response.put("success", false);
+            response.put("message", "Unexpected error occurred.");
+            return ResponseEntity.status(500).body(response);
         }
     }
 }
