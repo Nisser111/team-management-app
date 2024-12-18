@@ -8,7 +8,9 @@ import pl.menagment_system.team_menagment_system.dto.TeamRequestDTO;
 import pl.menagment_system.team_menagment_system.model.Team;
 import pl.menagment_system.team_menagment_system.repository.TeamRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -28,49 +30,97 @@ public class TeamController {
     }
 
     /**
-     * Retrieves all teams from the database.
+     * Handles HTTP GET requests to retrieve all teams from the repository.
+     * This method attempts to fetch all records of teams, constructs a response with the appropriate
+     * message, data, and success status, and returns it to the client.
+     * If an exception occurs, a 500 Internal Server Error is returned with an error message.
      *
-     * @return a list of Team objects representing all teams in the system
+     * @return ResponseEntity containing a Map with success status, message, and team data or error details.
      */
     @GetMapping
-    public List<Team> getAllTeams() {
-        return teamRepository.findAll();
+    public ResponseEntity<Object> getAllTeams() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            List<Team> teams = teamRepository.findAll();
+
+            if (teams.isEmpty()) {
+                response.put("success", true);
+                response.put("message", "Nie pobrano żadnych zespołów.");
+                response.put("data", teams);
+                return ResponseEntity.ok(response);
+            }
+
+            response.put("success", true);
+            response.put("message", "Zespoły pobrane pomyślnie.");
+            response.put("data", teams);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception ex) {
+            response.put("success", false);
+            response.put("message", "Wystąpił nieoczekiwany błąd podczas pobierania zespołów.");
+            response.put("error", ex.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
     }
 
     /**
-     * Deletes a team by its ID.
+     * Deletes a team identified by its ID.
      *
-     * @param id the unique identifier of the team to be deleted
-     * @return a ResponseEntity containing a success message if the team is deleted,
-     *         or an error message if the team is not found
+     * @param id The ID of the team to be deleted.
+     * @return A ResponseEntity containing the response details, including a success message if the team was deleted,
+     *         or an error message if the team was not found or an unexpected error occurred.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTeam(@PathVariable int id) {
-        String teamName = teamRepository.findById(id).get().getName();
+    public ResponseEntity<Object> deleteTeam(@PathVariable int id) {
+        Map<String, Object> response = new HashMap<>();
 
-        int rowsAffected = teamRepository.deleteById(id);
-        if (rowsAffected > 0) {
-            return ResponseEntity.ok(teamName + " has been deleted.");
-        } else {
-            return ResponseEntity.status(404).body("Team with ID " + id + " not found.");
+        try {
+            Optional<Team> optionalTeam = teamRepository.findById(id);
+
+            // Check if the team exists
+            if (optionalTeam.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Zespół o ID " + id + " nie został znaleziony.");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            String teamName = optionalTeam.get().getName();
+
+            // Perform deletion
+            int rowsAffected = teamRepository.deleteById(id);
+            if (rowsAffected > 0) {
+                response.put("success", true);
+                response.put("message", "Zespół " + teamName + " został pomyślnie usunięty.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Nie udało się usunąć zespołu o ID " + id + ".");
+                return ResponseEntity.status(400).body(response);
+            }
+
+        } catch (Exception ex) {
+            response.put("success", false);
+            response.put("message", "Wystąpił nieoczekiwany błąd podczas usuwania zespołu.");
+            response.put("error", ex.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 
 
+
     /**
-     * Adds a new team to the system using the data provided in the request body.
-     * The team name is mandatory, and the ID will be auto-generated.
-     * If the team name is missing or invalid, a 400 Bad Request is returned.
-     * If the operation is successful, a 200 OK response with a confirmation message is returned.
-     * Otherwise, a 400 Bad Request is returned in case of an error during the operation.
+     * Adds a new team using the provided team data.
      *
-     * @param dto the data transfer object containing the team details to be added
-     * @return a ResponseEntity containing:
-     *         - a success message with HTTP status 200 if the team is created successfully
-     *         - an error message with HTTP status 400 if validation fails or the operation is unsuccessful
+     * @param dto a TeamRequestDTO object containing team information such as the team's name
+     * @return a ResponseEntity object containing a response map with success status, message, and data;
+     *         returns HTTP 200 if the operation is successful, HTTP 400 for invalid input,
+     *         or HTTP 500 if an unexpected error occurs
      */
     @PostMapping
-    public ResponseEntity<String> addTeam(@Valid @RequestBody TeamRequestDTO dto) {
+    public ResponseEntity<Object> addTeam(@Valid @RequestBody TeamRequestDTO dto) {
+        Map<String, Object> response = new HashMap<>();
+
         try {
             Team team = new Team(
                     0, // ID will be auto-generated
@@ -79,50 +129,75 @@ public class TeamController {
 
             teamRepository.save(team);
 
-            return ResponseEntity.ok("New team has been added successfully.");
+            response.put("success", true);
+            response.put("message", "Nowy zespół " + team.getName() + " został pomyślnie dodany.");
+            response.put("data", team);
+            return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(400).body(ex.getMessage());
+            response.put("success", false);
+            response.put("message", "Nieprawidłowe dane wejściowe: " + ex.getMessage());
+            return ResponseEntity.status(400).body(response);
+
         } catch (Exception ex) {
-            return ResponseEntity.status(500).body("Unexpected error occurred. Failed to add the new team.");
+            response.put("success", false);
+            response.put("message", "Wystąpił nieoczekiwany błąd podczas dodawania zespołu.");
+            response.put("error", ex.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 
 
+
     /**
-     * Updates the details of an existing team identified by its unique ID.
-     * The method checks if the team exists, updates its name, and saves the changes.
-     * If the team does not exist or the update operation fails, an appropriate response is returned.
+     * Updates an existing team's details in the database based on the provided ID
+     * and the new team information from the request body.
      *
      * @param id the unique identifier of the team to be updated
-     * @param dto the data transfer object containing the updated team details
-     * @return a ResponseEntity containing:
-     *         - a success message with HTTP status 200 if the team is updated successfully
-     *         - an error message with HTTP status 404 if the team is not found
-     *         - an error message with HTTP status 400 if the update operation fails
+     * @param dto the new data for the team encapsulated in a TeamRequestDTO object
+     * @return a ResponseEntity containing a response map with the success status,
+     *         a message, and optionally the updated team object or error details
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateTeam(
+    public ResponseEntity<Object> updateTeam(
             @PathVariable int id,
             @Valid @RequestBody TeamRequestDTO dto) {
-        // Check if the team exists
-        Optional<Team> optionalTeam = this.teamRepository.findById(id);
-        if (optionalTeam.isEmpty()) {
-            return ResponseEntity.status(404).body("Team with ID " + id + " not found.");
-        }
+        Map<String, Object> response = new HashMap<>();
 
-        Team existingTeam = optionalTeam.get();
-        String oldTeamName = existingTeam.getName();
+        try {
+            // Check if the team exists
+            Optional<Team> optionalTeam = this.teamRepository.findById(id);
+            if (optionalTeam.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Zespół o ID " + id + " nie został znaleziony.");
+                return ResponseEntity.status(404).body(response);
+            }
 
-        // Update the team name
-        existingTeam.setName(dto.getName());
-        String newTeamName = existingTeam.getName();
+            Team existingTeam = optionalTeam.get();
+            String oldTeamName = existingTeam.getName();
 
-        // Save the updates
-        int rowsAffected = teamRepository.update(existingTeam);
-        if (rowsAffected > 0) {
-            return ResponseEntity.ok(oldTeamName + " has been updated to " + newTeamName);
-        } else {
-            return ResponseEntity.status(400).body("Failed to update the team with ID " + id + ".");
+            // Update the team name
+            existingTeam.setName(dto.getName());
+            String newTeamName = existingTeam.getName();
+
+            // Save the updates
+            int rowsAffected = teamRepository.update(existingTeam);
+            if (rowsAffected > 0) {
+                response.put("success", true);
+                response.put("message", "Zespół " + oldTeamName + " został zaktualizowany na " + newTeamName + ".");
+                response.put("data", existingTeam);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Nie udało się zaktualizować zespołu o ID " + id + ".");
+                return ResponseEntity.status(400).body(response);
+            }
+
+        } catch (Exception ex) {
+            response.put("success", false);
+            response.put("message", "Wystąpił nieoczekiwany błąd podczas aktualizowania zespołu.");
+            response.put("error", ex.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 }
