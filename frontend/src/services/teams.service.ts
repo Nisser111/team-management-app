@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Team } from "../interfaces/Team.interface";
 import { map } from "rxjs/operators";
+import { ApiResponse } from "../interfaces/ApiResponse.interface";
 
 interface AddTeamResponse {
   message: string;
@@ -17,16 +18,21 @@ export class TeamService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Retrieves a list of all teams from the server.
+   * Fetches a list of all teams from the server.
    *
-   * @returns An Observable that resolves to an array of Team objects.
+   * This method sends a GET request to the server to retrieve a list of all teams.
+   * The response is then mapped to the ApiResponse interface, which includes the data, success status, and error message.
+   *
+   * @returns An Observable that resolves to an ApiResponse object containing an array of Team objects.
    */
-  getTeams(): Observable<Team[]> {
+  getTeams(): Observable<ApiResponse> {
     const headers = {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
     };
-    return this.http.get<Team[]>(`${this.apiUrl}/teams`, { headers });
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}/teams`, { headers })
+      .pipe(map((response) => response));
   }
 
   /**

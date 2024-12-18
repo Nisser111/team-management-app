@@ -8,6 +8,8 @@ import { TeamService } from "../../services/teams.service";
 import { EmployeesService } from "../../services/employees.service";
 import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { apiErrorHandler } from "./apiErrorHandler";
 
 @Component({
   selector: "app-teams-container",
@@ -34,17 +36,34 @@ export class TeamsContainerComponent implements OnInit {
   constructor(
     private teamService: TeamService,
     private employeesService: EmployeesService,
-    private addEditTeamsDialog: MatDialog
+    private addEditTeamsDialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private errorDialogComponent: MatDialog
   ) {}
 
   fetchTeams() {
     return this.teamService.getTeams().subscribe({
-      next: (data) => {
-        this.teams = data;
+      next: (res) => {
+        const { data } = res;
+
+        this.teams = data as Team[];
         this.filterTeams(); // Filter teams initially
       },
-      error: (error) => {
-        console.error("Error fetching teams:", error);
+      error: (e) => {
+        const {
+          error: { error: success },
+        } = e;
+
+        if (success === undefined) {
+          apiErrorHandler(
+            { message: "Cos poszło nie tak. Przepraszamy za utrudnienia." },
+            this.snackBar,
+            this.errorDialogComponent
+          );
+          return;
+        }
+
+        apiErrorHandler(e.error, this.snackBar, this.errorDialogComponent);
       },
     });
   }
