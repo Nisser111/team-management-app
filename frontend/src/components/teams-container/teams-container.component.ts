@@ -114,7 +114,7 @@ export class TeamsContainerComponent implements OnInit {
             this.fetchTeams();
           },
           error: (err) => {
-            console.error("Error deleting team:", err);
+            this.communicationService.showError(err);
           },
         });
       }
