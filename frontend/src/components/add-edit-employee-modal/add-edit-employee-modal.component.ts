@@ -57,8 +57,9 @@ export class AddEditEmployeeModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.teamService.getTeams().subscribe({
-      next: (data) => {
-        this.teams = data;
+      next: (response) => {
+        const { data } = response;
+        this.teams = data as Team[];
       },
       error: (error) => {
         console.error("Error fetching teams:", error);

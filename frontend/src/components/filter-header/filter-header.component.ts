@@ -6,6 +6,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { Team } from "../../interfaces/Team.interface";
 import { TeamService } from "../../services/teams.service";
 import { NgFor } from "@angular/common";
+import { CommunicationService } from "../../services/communication.service";
 
 /**
  * FilterHeaderComponent is a standalone component that provides a toolbar
@@ -50,16 +51,20 @@ export class FilterHeaderComponent {
   selectedTeam = -1;
   teams: Team[] = [];
 
-  constructor(private teamService: TeamService) {}
+  constructor(
+    private teamService: TeamService,
+    private communicationService: CommunicationService
+  ) {}
 
   ngOnInit() {
     // Fetch teams
     this.teamService.getTeams().subscribe({
-      next: (data) => {
-        this.teams = [{ id: -1, name: "Wszystkie" }, ...data];
+      next: (response) => {
+        const { data } = response;
+        this.teams = [{ id: -1, name: "Wszystkie" }, ...(data as Team[])];
       },
-      error: (error) => {
-        console.error("Error fetching teams:", error);
+      error: (err) => {
+        this.communicationService.showError(err);
       },
     });
   }
