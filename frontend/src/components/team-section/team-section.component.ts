@@ -182,10 +182,11 @@ export class TeamSectionComponent {
   editEmployee(employee: Employee) {
     this.employeesService.editById(employee).subscribe({
       next: (response) => {
-        console.log(response);
+        const { message } = response;
+        this.communicationService.showInfo(message);
       },
       error: (err) => {
-        console.error("Error editing employee:", err);
+        this.communicationService.showError(err);
       },
     });
   }
@@ -229,10 +230,11 @@ export class TeamSectionComponent {
     // Optionally, you can also call a service to save the new employee to the backend
     this.employeesService.addNew(newEmployee).subscribe({
       next: (response) => {
-        console.log(response);
+        const { message } = response;
+        this.communicationService.showInfo(message);
       },
       error: (err) => {
-        console.error("Error adding employee:", err);
+        this.communicationService.showError(err);
       },
     });
   }
@@ -247,17 +249,14 @@ export class TeamSectionComponent {
   deleteEmployee(id: number) {
     this.employeesService.deleteById(id).subscribe({
       next: (response) => {
-        if (response.message) {
-          console.log(response.message); // Handle success message
+        const { message } = response;
+        this.communicationService.showInfo(message);
 
-          // Remove deleted employee from local employees
-          this.employees = this.employees.filter((e) => e.id !== id);
-        } else {
-          console.log(response); // Handle other responses
-        }
+        // Remove deleted employee from local employees
+        this.employees = this.employees.filter((e) => e.id !== id);
       },
       error: (err) => {
-        console.error("Error deleting team:", err);
+        this.communicationService.showError(err);
       },
     });
   }

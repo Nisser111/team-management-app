@@ -59,11 +59,12 @@ export class TeamsContainerComponent implements OnInit {
 
     // Fetch employees
     this.employeesService.getAll().subscribe({
-      next: (data) => {
-        this.employees = data;
+      next: (response) => {
+        const { data } = response;
+        this.employees = data as Employee[];
       },
-      error: (error) => {
-        console.error("Error fetching employees:", error);
+      error: (err) => {
+        this.communicationService.showInfo(err);
       },
     });
   }

@@ -48,7 +48,7 @@ export class AddEditEmployeeModalComponent implements OnInit {
     public dialogRef: MatDialogRef<AddEditEmployeeModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.currentEmployeeData = this.data.currentEmployeeData;
+    this.currentEmployeeData = this.data.currentEmployeeData || { id: null };
     this.employeeForm = createEmployeeForm(
       this.fb,
       this.currentEmployeeData.id
