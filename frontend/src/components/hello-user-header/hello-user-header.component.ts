@@ -15,7 +15,7 @@ import { Component } from "@angular/core";
       </h1>
     </header>
   `,
-  styleUrls: ["../../styles/hello-user-header.scss"],
+  styleUrls: ["./hello-user-header.scss"],
 })
 export class HelloUserHeaderComponent {
   username: string = "Miłosz";
