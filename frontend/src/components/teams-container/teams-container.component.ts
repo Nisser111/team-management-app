@@ -6,9 +6,9 @@ import { AddNewTeamBtnComponent } from "../add-new-team-btn/add-new-team-btn.com
 import { Team } from "../../interfaces/Team.interface";
 import { TeamService } from "../../services/teams.service";
 import { EmployeesService } from "../../services/employees.service";
-import { AddEditTeamsModalComponent } from "../add-edit-teams-modal/add-edit-teams-modal.component";
 import { MatDialog } from "@angular/material/dialog";
 import { CommunicationService } from "../../services/communication.service";
+import { TeamManagementService } from "../../services/team-menagement.service";
 
 @Component({
   selector: "app-teams-container",
@@ -22,7 +22,7 @@ import { CommunicationService } from "../../services/communication.service";
         [employees]="getEmployeesByTeamId(team.id)"
       ></app-team-section>
     </div>
-    <app-add-new-team-btn (click)="addTeam()"></app-add-new-team-btn>
+    <app-add-new-team-btn (click)="onAddTeam()"></app-add-new-team-btn>
   `,
   styles: [],
 })
@@ -35,42 +35,26 @@ export class TeamsContainerComponent implements OnInit {
   constructor(
     private teamService: TeamService,
     private employeesService: EmployeesService,
-    private addEditTeamsDialog: MatDialog,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private teamManagementService: TeamManagementService,
+    private dialog: MatDialog
   ) {}
 
   fetchTeams() {
     return this.teamService.getTeams().subscribe({
-      next: (res) => {
-        const { data } = res;
-
+      next: ({ data }) => {
         this.teams = data as Team[];
         this.filterTeams(); // Filter teams initially
       },
-      error: (e) => {
-        this.communicationService.showError(e);
-      },
+      error: (err) => this.communicationService.showError(err),
     });
   }
 
-  ngOnInit() {
-    // Fetch teams
-    this.fetchTeams();
-
-    // Fetch employees
-    this.employeesService.getAll().subscribe({
-      next: (response) => {
-        const { data } = response;
-        this.employees = data as Employee[];
-      },
-      error: (err) => {
-        this.communicationService.showInfo(err);
-      },
+  fetchEmployees() {
+    return this.employeesService.getAll().subscribe({
+      next: ({ data }) => (this.employees = data as Employee[]),
+      error: (err) => this.communicationService.showInfo(err),
     });
-  }
-
-  ngOnChanges() {
-    this.filterTeams(); // Re-filter teams when selectedTeamId changes
   }
 
   // Method to filter teams based on selected team ID
@@ -85,6 +69,19 @@ export class TeamsContainerComponent implements OnInit {
     }
   }
 
+  ngOnInit() {
+    // Fetch teams
+    this.fetchTeams();
+
+    // Fetch employees
+    this.fetchEmployees();
+  }
+
+  ngOnChanges() {
+    // Re-filter teams when selectedTeamId changes
+    this.filterTeams();
+  }
+
   /**
    * Retrieves a list of employees that belong to a specific team.
    *
@@ -95,29 +92,8 @@ export class TeamsContainerComponent implements OnInit {
     return this.employees.filter((employee) => employee.teamId === teamId);
   }
 
-  addTeam() {
-    const dialogRef = this.addEditTeamsDialog.open(AddEditTeamsModalComponent, {
-      data: { dialogTitle: "Dodaj nowy zespół" },
-    });
-
-    interface DialogResult {
-      confirmed: boolean;
-      newName: string;
-    }
-
-    dialogRef.afterClosed().subscribe((result: DialogResult) => {
-      if (result.confirmed) {
-        this.teamService.addTeam(result.newName).subscribe({
-          next: (response) => {
-            const { message } = response;
-            this.communicationService.showInfo(message);
-            this.fetchTeams();
-          },
-          error: (err) => {
-            this.communicationService.showError(err);
-          },
-        });
-      }
-    });
+  // Call addTeam method from teamMenagement service to add new employee
+  onAddTeam(): void {
+    this.teamManagementService.addTeam(this.dialog, this.fetchTeams.bind(this));
   }
 }
