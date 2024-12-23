@@ -6,29 +6,102 @@ This is the guide to help you quickly set up, run, and interact with the Team an
 
 # Table of Contents
 
-1. **Getting started**
-   
-   - [Requirements](#requirements)
-   - [Setup Instructions](#setup-instructions)
-     - [Clone the Repository](#1-clone-the-repository)
-     - [Configure the Database](#2-configure-the-database)
-     - [Build the Project](#3-build-the-project)
-     - [Run the Application](#4-run-the-application)
-   - [Database Configuration](#2-Database-configuration).
+## Getting Started
 
-2. **Employee management endpoints**
-   
-   - [Get All Employees](#get-all-employees)
-   - [Add New Employee](#add-new-employee)
-   - [Update Employee](#update-employee)
-   - [Delete Employee](#delete-employee)
+1. [Requirements](#requirements)
+2. [Setup Instructions](#setup-instructions)
+   - [Clone Repository](#1-clone-the-repository)
+   - [Configure Database](#2-configure-the-database)
+   - [Build Project](#3-build-the-project)
+   - [Run Application](#4-run-the-application)
 
-3. **Team management endpoints**
+## Database Configuration
+
+1. [Database Overview](#database-configuration)
+   - [Database Name](#database-name)
+   - [Tables Overview](#tables-overview)
+     - [Teams Table](#1-teams-table)
+     - [Employees Table](#2-employees-table)
+   - [Example Data](#example-data)
+   - [Admin User](#admin-user)
+
+## Response Structure
+
+1. [Standard Response Format](#response-structure)
+   - [Common Response Keys](#1-every-response-contains-the-following-keys)
+   - [Localized Messages](#2-localized-messages)
+   - [Error Handling](#3-error-handling)
+
+## API Endpoints
+
+### Employees
+
+1. [Get All Employees](#get-all-employees)
    
-   - [Get All Teams](#get-all-teams)
-   - [Add New Team](#add-new-team)
-   - [Update Team](#update-team)
-   - [Delete Team](#delete-team)
+   - [Endpoint Description](#description)
+   - [Request Details](#request)
+   - [Response Format](#response)
+   - [CURL Example](#curl-example)
+
+2. [Add New Employee](#add-new-employee)
+   
+   - [Endpoint Description](#description-1)
+   - [Request Details](#request-1)
+   - [Response Format](#response-1)
+   - [Validation Rules](#validation-rules)
+   - [CURL Example](#curl-example-1)
+
+3. [Update Employee](#update-employee)
+   
+   - [Endpoint Description](#description-2)
+   - [Request Details](#request-2)
+   - [Response Format](#response-2)
+   - [Validation Rules](#validation-rules-1)
+   - [CURL Example](#curl-example-2)
+
+4. [Delete Employee](#delete-employee)
+   
+   - [Endpoint Description](#description-3)
+   - [Request Details](#request-3)
+   - [Response Format](#response-3)
+   - [CURL Example](#curl-example-3)
+
+### Teams
+
+1. [Get All Teams](#get-all-teams)
+   
+   - [Endpoint Description](#description-4)
+   - [Request Details](#request-4)
+   - [Response Format](#response-4)
+   - [CURL Example](#curl-example-4)
+
+2. [Add New Team](#add-new-team)
+   
+   - [Endpoint Description](#description-5)
+   - [Request Details](#request-5)
+   - [Response Format](#response-5)
+   - [CURL Example](#curl-example-5)
+
+3. [Update Team](#update-team)
+   
+   - [Endpoint Description](#description-6)
+   - [Request Details](#request-6)
+   - [Response Format](#response-6)
+   - [CURL Example](#curl-example-6)
+
+4. [Delete Team](#delete-team)
+   
+   - [Endpoint Description](#description-7)
+   - [Request Details](#request-7)
+   - [Response Format](#response-7)
+   - [CURL Example](#curl-example-7)
+
+## Deployment
+
+1. [Deployment Instructions](#deployment)
+   - [Package Application](#1-package-it-into-a-jar-file)
+   - [Run Application](#2-run-the-jar-file)
+   - [Database Configuration](#3-ensure-the-application-is-connected-to-a-production-ready-database)
 
 ---
 
@@ -187,6 +260,32 @@ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 
 ---
 
+# Response structure
+
+1. Every response contains the following keys:
+   
+   - `success` (Boolean): Indicates whether the request was successful (`true`) or not (`false`).
+   
+   - `message` (String): Describes the result of the operation or any error that occurred.
+   
+   - `data` (Object, optional): Contains details of the newly created employee (when successful).
+   
+   - `error` (String, optional): Captures any technical error details during a failure.
+
+2. **Localized Messages:**
+   
+   - Success and error messages are localized in Polish where applicable, e.g., `"Pracownik John Doe został dodany."`.
+
+3. **Error Handling:**
+   
+   - **404 Not Found**: Returned when the team with the specified ID doesn't exist.
+   
+   - **400 Bad Request**: Returned when the deletion operation fails despite the team existing.
+   
+   - **500 Internal Server Error**: Used for unexpected technical issues during the processing
+
+---
+
 # Get all Employees
 
 ### Endpoint
@@ -195,7 +294,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 
 ### Description
 
-Retrieves a list of all employees from the system. Returns the full details of all employees stored in the database.
+Retrieves a list of all employees from the system. Returns employee details inside a structured response body, including success flags, messages, and data.
 
 ---
 
@@ -207,7 +306,7 @@ Retrieves a list of all employees from the system. Returns the full details of a
 
 #### Headers
 
-No specific headers are required for this request. Optional headers may include:
+Headers are optional for this request.
 
 - **Content-Type**: `application/json`
 
@@ -229,43 +328,59 @@ None. This API endpoint does not accept a body for the `GET` request.
    
    - **Description**: The request was successful, and the server has returned the list of all employees.
    
-   - **Response Body Example** (JSON):
-
-```json
- [
-   {
-     "id": 1,
-     "firstName": "John",
-     "lastName": "Doe",
-     "email": "john.doe@example.com",
-     "phone": "+123456789",
-     "hireDate": "2022-01-15",
-     "role": "Developer",
-     "teamId": 101
-   },
-   {
-     "id": 2,
-     "firstName": "Jane",
-     "lastName": "Smith",
-     "email": "jane.smith@example.com",
-     "phone": "+987654321",
-     "hireDate": "2021-11-01",
-     "role": "Manager",
-     "teamId": 102
-   }
- ]
-```
-
-2. **500 Internal Server Error**
-   
-   - **Description**: An unexpected error occurred on the server while retrieving employees.
-   
-   - **Response Body Example** (JSON):
+   - **Response Body Example** (JSON - Employees found):
 
 ```json
  {
-   "error": "Unexpected error occurred."
- }
+  "success": true,
+  "message": "Pracownicy zostali pomyślnie pobrani.",
+  "data": [
+    {
+      "id": 1,
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "+123456789",
+      "hireDate": "2022-01-15",
+      "role": "Developer",
+      "teamId": 101
+    },
+    {
+      "id": 2,
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane.smith@example.com",
+      "phone": "+987654321",
+      "hireDate": "2021-11-01",
+      "role": "Manager",
+      "teamId": 102
+    }
+  ]
+}
+```
+
+- Response Body Example** (JSON - Employees found):
+
+```json
+{
+  "success": true,
+  "message": "Nie znaleziono pracowników.",
+  "data": []
+}
+```
+
+
+
+2. **500 Internal Server Error**
+- **Description**: An unexpected error occurred on the server while retrieving employees.
+
+- **Response Body Example** (JSON):
+
+```json
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ---
@@ -297,6 +412,8 @@ This endpoint allows the creation of a new employee in the system. It validates 
 #### URL: `/employees`
 
 #### Headers
+
+Headers are required for this request.
 
 - **Content-Type**: `application/json`
 
@@ -343,9 +460,20 @@ A `JSON` object representing the new employee's details. All fields are required
    - **Response Body Example**:
 
 ```json
- {
-   "message": "New employee has been added successfully."
- }
+{
+  "success": true,
+  "message": "Pracownik John Doe został dodany.",
+  "data": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "+123456789",
+    "hireDate": "2022-01-15",
+    "role": "Developer",
+    "teamId": 101
+  }
+}
 ```
 
 2. **400 Bad Request**
@@ -355,21 +483,29 @@ A `JSON` object representing the new employee's details. All fields are required
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Email is already in use."
- }
+{
+  "success": false,
+  "message": "Email is already in use."
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Hire date must not be in the future."
+}
 ```
 
 3. **500 Internal Server Error**
-   
-   - **Description**: An unexpected error occurred while processing the request.
-   
-   - **Response Body Example**:
+- **Description**: An unexpected error occurred while processing the request.
+
+- **Response Body Example**:
 
 ```json
- {
-   "error": "Unexpected error occurred."
- }
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ### Validation Rules
@@ -412,8 +548,7 @@ curl -X POST http://localhost:8080/employees \
 
 ### Description
 
-This endpoint allows updating an existing employee's details. Only the fields provided in the request body will be updated. If a field is not 
-included in the request body, it will not be modified.
+This endpoint allows updating an existing employee's details. Only the fields provided in the request body will be updated. If a field is not included in the request body, it will not be modified.
 
 ---
 
@@ -430,6 +565,8 @@ included in the request body, it will not be modified.
 | `id`      | `int` | Yes      | The unique identifier of the employee to be updated. |
 
 #### Headers
+
+Headers are required for this request.
 
 - **Content-Type**: `application/json`
 
@@ -473,7 +610,18 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 ```json
 {
-  "message": "Employee updated successfully."
+  "success": true,
+  "message": "Pracownik John Doe został pomyślnie zaktualizowany.",
+  "data": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.new@example.com",
+    "phone": "+123456789",
+    "hireDate": "2022-01-15",
+    "role": "Senior Developer",
+    "teamId": 101
+  }
 }
 ```
 
@@ -485,7 +633,15 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 ```json
 {
-  "error": "Email is already in use."
+  "success": false,
+  "message": "Email is already in use."
+}
+```
+
+```json
+{
+  "success": false,
+  "message": "Hire date must not be in the future."
 }
 ```
 
@@ -496,9 +652,10 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Employee not found."
- }
+{
+  "success": false,
+  "message": "Nie znaleziono pracownika o identyfikatorze 1."
+}
 ```
 
 4. **500 Internal Server Error**
@@ -508,9 +665,10 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
    - **Response Body Example**:
 
 ```json
- {
-   "error": "An unexpected error occurred."
- }
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ### Validation Rules
@@ -567,7 +725,7 @@ This endpoint allows deleting an employee from the system using their unique ID.
 
 #### Headers
 
-No specific headers are required for this request. Optional headers may include:
+Headers are optional for this request.
 
 - **Content-Type**: `application/json`
 
@@ -590,7 +748,18 @@ None.
 
 ```json
 {
-  "message": "Employee with ID 1 has been deleted."
+  "success": true,
+  "message": "Pracownik John Doe został usunięty.",
+  "data": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phone": "+123456789",
+    "hireDate": "2022-01-15",
+    "role": "Developer",
+    "teamId": 101
+  }
 }
 ```
 
@@ -602,9 +771,23 @@ None.
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Employee with ID 1 not found."
- }
+{
+  "success": false,
+  "message": "Nie znaleziono pracownika o identyfikatorze 1."
+}
+```
+
+3. **500 Internal Server Error**
+- **Description**: An unexpected error occurred while 
+  processing the request.
+
+- **Response Body Example**
+
+```json
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ---
@@ -625,7 +808,7 @@ curl -X DELETE http://localhost:8080/employees/1
 
 ### Description
 
-This endpoint retrieves a list of all teams available in the system. Each team includes details such as its unique identifier (`id`) and name.
+This endpoint retrieves a list of all teams in the system. Each team includes details like its unique identifier (`id`) and name. If no teams are available, an appropriate message is returned. The response is structured and provides information about the success, message, and the team data.
 
 ---
 
@@ -637,7 +820,7 @@ This endpoint retrieves a list of all teams available in the system. Each team i
 
 #### Headers
 
-No specific headers are required for this request. Optional headers may include:
+Headers are optional for this request.
 
 - **Content-Type**: `application/json`
 
@@ -649,38 +832,53 @@ No specific headers are required for this request. Optional headers may include:
 
 1. **200 OK**
    
-   - **Description**: Returns a list of all teams in the 
-     system.
+   - **Description**: A list of all teams in the system is returned, or an indication that 
+     no teams are available.
    
-   - **Response Body Example**:
-
-```json
-[
-    {
-        "id": 1,
-        "name": "Development Team"
-    },
-    {
-        "id": 2,
-        "name": "Marketing Team"
-    },
-    {
-        "id": 3,
-        "name": "Sales Team"
-    }
-]
-```
-
-2. 500 Internal Server Error
-   
-   - **Description**: An unexpected server error occurred 
-     while processing the request.
-   
-   - **Response Body Example**:
+   - **Response Body Example** (teams found):
 
 ```json
 {
-  "error": "An unexpected error occurred."
+  "success": true,
+  "message": "Zespoły pobrane pomyślnie.",
+  "data": [
+    {
+      "id": 1,
+      "name": "Development Team"
+    },
+    {
+      "id": 2,
+      "name": "Marketing Team"
+    },
+    {
+      "id": 3,
+      "name": "Sales Team"
+    }
+  ]
+}
+```
+
+- Response Body Example** (teams not found):
+
+```json
+{
+  "success": true,
+  "message": "Nie pobrano żadnych zespołów.",
+  "data": []
+}
+```
+
+2. 500 Internal Server Error
+- **Description**: An unexpected server error occurred 
+  while processing the request.
+
+- **Response Body Example**:
+
+```json
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd podczas pobierania zespołów.",
+  "error": "Error details (if available)"
 }
 ```
 
@@ -716,7 +914,8 @@ This endpoint allows the addition of a new team to the system. The team name is 
 
 #### Headers
 
-- **Content-Type**: `application/json`
+- Headers are required for this request.
+  - **Content-Type**: `application/json`
 
 #### Request Body (JSON Object)
 
@@ -750,7 +949,12 @@ A `JSON` object representing the new team's details. All fields are required.
 
 ```json
 {
-  "message": "New team has been added successfully."
+  "success": true,
+  "message": "Nowy zespół Development Team został pomyślnie dodany.",
+  "data": {
+    "id": 1,
+    "name": "Development Team"
+  }
 }
 ```
 
@@ -762,7 +966,8 @@ A `JSON` object representing the new team's details. All fields are required.
 
 ```json
 {
-  "error": "Team name is required"
+  "success": false,
+  "message": "Nieprawidłowe dane wejściowe: Team name is required."
 }
 ```
 
@@ -774,7 +979,9 @@ A `JSON` object representing the new team's details. All fields are required.
 
 ```json
 {
-  "error": "Unexpected error occurred. Failed to add the new team."
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd podczas dodawania zespołu.",
+  "error": "Error details (if available)"
 }
 ```
 
@@ -790,9 +997,6 @@ curl -X POST http://localhost:8080/teams \
 }'
 ```
 
-Here is the REST API documentation for the `PATCH /teams/{id}` 
-route.
-
 ---
 
 # Update Team
@@ -805,7 +1009,7 @@ route.
 
 ### Description
 
-This endpoint allows an existing team's name to be updated based on its unique identifier (`id`). If the team with the provided `id` does not exist, an appropriate error response is returned.
+This endpoint allows updating an existing team's name based on its unique identifier (`id`). If a team with the provided `id` does not exist, an appropriate error response is returned. The response contains structured messages about the success or failure of the update operation.
 
 ---
 
@@ -822,6 +1026,8 @@ This endpoint allows an existing team's name to be updated based on its unique i
 | `id`      | `int` | Yes      | The unique identifier of the team to be updated. |
 
 #### Headers
+
+Headers are required for this request.
 
 - **Content-Type**: `application/json`
 
@@ -857,33 +1063,52 @@ A `JSON` object representing the new employee's details. All fields are required
 
 ```json
 {
-  "message": "Development Team has been updated to New Team Name."
+  "success": true,
+  "message": "Zespół Development Team został zaktualizowany na Updated Team Name.",
+  "data": {
+    "id": 1,
+    "name": "Updated Team Name"
+  }
 }
 ```
 
 2. **404 Not Found**
    
-   - **Description**: The team with the specified ID does 
-     not exist.
+   - **Description**: The team with the specified ID does not exist.
    
    - **Response Body Example**:
 
 ```json
 {
-  "error": "Team with ID 1 not found."
+  "success": false,
+  "message": "Zespół o ID 1 nie został znaleziony."
 }
 ```
 
 3. **400 Bad Request**
    
-   - **Description**: The provided data is invalid or the 
-     update operation failed.
+   - **Description**: The provided data is invalid, or the update operation failed.
    
    - **Response Body Example**:
 
 ```json
 {
-  "error": "Failed to update the team with ID 1."
+  "success": false,
+  "message": "Nie udało się zaktualizować zespołu o ID 1."
+}
+```
+
+4. **500 Internal Server Error**
+- **Description**: An unexpected error occurred while 
+  processing the request.
+
+- **Response Body Example**:
+
+```json
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd podczas aktualizowania zespołu.",
+  "error": "Error details (if available)"
 }
 ```
 
@@ -911,7 +1136,7 @@ curl -X PATCH http://localhost:8080/teams/1 \
 
 ### Description
 
-This endpoint allows the deletion of an existing team from the system based on its unique identifier (`id`). If the team is successfully deleted, a confirmation message is returned. If the team does not exist or the deletion fails, an appropriate error response is returned.
+This endpoint allows the deletion of an existing team from the system based on its unique identifier (`id`). If the team exists and is successfully deleted, a confirmation message is returned. If the team does not exist, or if there are issues with deletion, meaningful error responses are provided.
 
 ---
 
@@ -929,7 +1154,7 @@ This endpoint allows the deletion of an existing team from the system based on i
 
 #### Headers
 
-No specific headers are required for this request. Optional headers may include:
+Headers are optional for this request.
 
 - **Content-Type**: `application/json`
 
@@ -947,33 +1172,48 @@ No specific headers are required for this request. Optional headers may include:
 
 ```json
 {
-  "message": "Development Team has been deleted."
+  "success": true,
+  "message": "Zespół Development Team został pomyślnie usunięty."
 }
 ```
 
 2. **404 Not Found**
    
-   - **Description**: The team with the specified ID does 
-     not exist.
+   - **Description**: The team with the specified ID does not exist.
    
    - **Response Body Example**:
 
 ```json
 {
-  "error": "Team with ID 10 not found."
+  "success": false,
+  "message": "Zespół o ID 10 nie został znaleziony."
 }
 ```
 
-3. **500 Internal Server Error**
+3. **400 Bad Request**
    
-   - **Description**: An unexpected server error occurred 
-     during the deletion process.
+   - **Description**: The team exists, but the deletion operation could not be completed.
    
    - **Response Body Example**:
 
 ```json
 {
-  "error": "Unexpected error occurred while deleting the team."
+  "success": false,
+  "message": "Nie udało się usunąć zespołu o ID 10."
+}
+```
+
+4. **500 Internal Server Error**
+   
+   - **Description**: An unexpected server error occurred during the deletion process.
+   
+   - **Response Body Example**:
+
+```json
+{
+  "success": false,
+  "message": "Wystąpił nieoczekiwany błąd podczas usuwania zespołu.",
+  "error": "Error details (if available)"
 }
 ```
 
