@@ -24,7 +24,7 @@ import {
       </button>
     </mat-dialog-actions>
   `,
-  styleUrls: ["../../styles/delete-confirm-modal.scss"],
+  styleUrls: ["./delete-confirm-modal.scss"],
 })
 export class DeleteConfirmModalComponent {
   constructor(
