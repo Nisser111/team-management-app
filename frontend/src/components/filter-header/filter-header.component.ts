@@ -23,28 +23,8 @@ import { CommunicationService } from "../../services/communication.service";
     MatIconModule,
     NgFor,
   ],
-  template: `
-    <mat-toolbar color="primary">
-      <h2>
-        <mat-icon>tune</mat-icon>
-        Pokaż
-      </h2>
-      <div class="spacer"></div>
-
-      <mat-form-field>
-        <mat-label>Pokaż zespół</mat-label>
-        <mat-select
-          [(ngModel)]="selectedTeam"
-          (selectionChange)="onTeamSelect($event.value)"
-        >
-          <mat-option *ngFor="let team of teams" [value]="team.id">{{
-            team.name
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-toolbar>
-  `,
-  styleUrls: ["../../styles/filter-header.scss"],
+  templateUrl: "./filter-header.template.html",
+  styleUrls: ["./filter-header.scss"],
 })
 export class FilterHeaderComponent {
   @Output() teamSelected = new EventEmitter<number>();
