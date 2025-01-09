@@ -24,7 +24,7 @@ import { MatButtonModule } from "@angular/material/button";
       </button>
     </mat-menu>
   `,
-  styleUrls: ["../../styles/employee-options-list.scss"],
+  styleUrls: ["./employee-options-list.scss"],
 })
 export class EmployeeOptionsListComponent {
   @Input() employee!: Employee;

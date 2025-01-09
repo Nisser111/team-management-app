@@ -1,5 +1,5 @@
-@use "./mixins" as *;
-@use "./global-varriables.scss" as *;
+@use "../../styles/mixins" as *;
+@use "../../styles/global-varriables.scss" as *;
 
 .team {
   @include mainContainer();

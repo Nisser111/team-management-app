@@ -20,25 +20,8 @@ import {
     MatHint,
     MatDialogTitle,
   ],
-  template: `
-    <h3 mat-dialog-title>{{ data.dialogTitle }}</h3>
-    <mat-dialog-content>
-      <mat-form-field appearance="fill">
-        <mat-label>Nazwa</mat-label>
-        <input matInput id="newName" name="newName" [value]="data.oldName" />
-        <mat-hint class="error-message" align="start">{{
-          errorMessage
-        }}</mat-hint>
-      </mat-form-field>
-    </mat-dialog-content>
-    <mat-dialog-actions>
-      <button mat-button (click)="onCancel()">Anuluj</button>
-      <button mat-raised-button cdkClosable (click)="onConfirm($event)">
-        Zatwierdź
-      </button>
-    </mat-dialog-actions>
-  `,
-  styleUrls: ["../../styles/add-edit-teams-modal.scss"],
+  templateUrl: "./add-edit-teams-modal.template.html",
+  styleUrls: ["./add-edit-teams-modal.scss"],
 })
 export class AddEditTeamsModalComponent {
   errorMessage: string | null = null;

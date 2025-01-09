@@ -9,6 +9,6 @@ import { MatButton } from "@angular/material/button";
       Dodaj nowy zespół
     </button>
   `,
-  styleUrls: ["../../styles/add-new-team-btn.scss"],
+  styleUrls: ["./add-new-team-btn.scss"],
 })
 export class AddNewTeamBtnComponent {}

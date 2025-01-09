@@ -64,8 +64,6 @@ cd team-management-api/backend
 ### 2. Configure the database
 
 - Create a new database `menagement_system` by [following instructions](#2-Database-Configuration).
-  
-  
 
 - Update the database configurations in your `application.properties` 
   file located at `src/main/resources/`. Example:
@@ -183,9 +181,8 @@ An administrator user is created for managing the database. Below are its creden
 - **Privileges**: Full privileges across all tables with no restrictions.
 
 ```sql
-CREATE USER 'admin'@'%' IDENTIFIED VIA mysql_native_password USING 'QEC8u';
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' 
-REQUIRE NONE WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+CREATE USER 'admin'@'%' IDENTIFIED BY'QEC8u';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 ```
 
 ---
@@ -278,8 +275,6 @@ None. This API endpoint does not accept a body for the `GET` request.
 ```shell
 curl -X GET http://localhost:8080/employees
 ```
-
-
 
 # Add New Employee
 
@@ -404,8 +399,6 @@ curl -X POST http://localhost:8080/employees \
   "teamId": 101
 }'
 ```
-
-
 
 ---
 
@@ -621,10 +614,6 @@ None.
 ```shell
 curl -X DELETE http://localhost:8080/employees/1
 ```
-
-
-
-
 
 # Get all Teams
 
@@ -1018,5 +1007,3 @@ java -jar target/team-management-api.jar
 
 3. Ensure the application is connected to a production-ready database 
    with proper configurations.
-
-

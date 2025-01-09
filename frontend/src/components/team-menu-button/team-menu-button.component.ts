@@ -17,24 +17,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
       </button>
     </mat-menu>
   `,
-  styles: [
-    `
-      :host {
-        position: relative;
-        display: inline-block;
-      }
-
-      button {
-        mat-icon {
-          color: rgba(0, 0, 0, 0.4);
-        }
-      }
-
-      .delete-menu-item {
-        color: #c51e3a;
-      }
-    `,
-  ],
+  styleUrls: ["./team-menu-button.scss"],
 })
 export class TeamMenuButtonComponent {
   @Output() rename = new EventEmitter<void>();
