@@ -35,7 +35,7 @@ export class TeamSectionComponent {
   @Input() teamName: string = "";
   @Input() teamId: number = -1;
   @Input() employees: Employee[] = [];
-  @Output() onEmployeeDelete = new EventEmitter();
+  @Output() onEmployeeDelete = new EventEmitter<Employee>();
 
   showComponent: boolean = true;
 
@@ -76,8 +76,10 @@ export class TeamSectionComponent {
   confirmEmployeeDelete(employee: Employee): void {
     this.employeeManagementService
       .confirmEmployeeDelete(this.dialog, employee, this.employees)
-      .then((deletedEmployee: Employee) => {
-        this.onEmployeeDelete.emit(deletedEmployee);
+      .subscribe(({ success }) => {
+        if (success) {
+          this.onEmployeeDelete.emit(employee);
+        }
       });
   }
 

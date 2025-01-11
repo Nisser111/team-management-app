@@ -5,6 +5,8 @@ import { AddEditEmployeeModalComponent } from "../components/add-edit-employee-m
 import { DeleteConfirmModalComponent } from "../components/delete-confirm-modal/delete-confirm-modal.component";
 import { EmployeesService } from "./employees.service";
 import { CommunicationService } from "./communication.service";
+import { tap, map, catchError, switchMap } from "rxjs/operators";
+import { of } from "rxjs";
 
 /**
  * Service responsible for managing employee data, including editing, adding, and deleting employees.
@@ -102,22 +104,21 @@ export class EmployeeManagementService {
     dialog: MatDialog,
     employee: Employee,
     employees: Employee[]
-  ): Promise<Employee> {
-    return new Promise((resolve) => {
-      const dialogRef = dialog.open(DeleteConfirmModalComponent, {
-        data: {
-          textToShow: `Czy na pewno chcesz usunąć pracownika ${employee.firstName} ${employee.lastName}?`,
-        },
-      });
-
-      dialogRef.afterClosed().subscribe((result: boolean) => {
-        if (result) {
-          this.deleteEmployee(employee.id, employees).then((deltedEmployee) =>
-            resolve(deltedEmployee)
-          );
-        }
-      });
+  ) {
+    const dialogRef = dialog.open(DeleteConfirmModalComponent, {
+      data: {
+        textToShow: `Czy na pewno chcesz usunąć pracownika ${employee.firstName} ${employee.lastName}?`,
+      },
     });
+
+    return dialogRef.afterClosed().pipe(
+      switchMap((dialogResult: boolean) => {
+        if (dialogResult) {
+          return this.deleteEmployee(employee.id, employees);
+        }
+        return of({ success: false });
+      })
+    );
   }
 
   /**
@@ -158,20 +159,14 @@ export class EmployeeManagementService {
    * @param id The ID of the employee to be deleted.
    * @param employees The array of employees from which the employee will be removed.
    */
-  private deleteEmployee(id: number, employees: Employee[]): Promise<Employee> {
-    return new Promise((resolve, reject) => {
-      this.employeesService.deleteById(id).subscribe({
-        next: ({ message }) => {
-          this.communicationService.showInfo(message);
-
-          const deletedEmployeeIndex = employees.findIndex((e) => e.id === id);
-          resolve(employees[deletedEmployeeIndex]);
-        },
-        error: (err) => {
-          this.communicationService.showError(err);
-          reject(err);
-        },
-      });
-    });
+  private deleteEmployee(id: number, employees: Employee[]) {
+    return this.employeesService.deleteById(id).pipe(
+      tap({
+        next: ({ message }) => this.communicationService.showInfo(message),
+        error: (err) => this.communicationService.showError(err),
+      }),
+      map((response) => ({ success: true })),
+      catchError((error) => of({ success: false }))
+    );
   }
 }
