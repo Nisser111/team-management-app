@@ -102,17 +102,21 @@ export class EmployeeManagementService {
     dialog: MatDialog,
     employee: Employee,
     employees: Employee[]
-  ): void {
-    const dialogRef = dialog.open(DeleteConfirmModalComponent, {
-      data: {
-        textToShow: `Czy na pewno chcesz usunąć pracownika ${employee.firstName} ${employee.lastName}?`,
-      },
-    });
+  ): Promise<Employee> {
+    return new Promise((resolve) => {
+      const dialogRef = dialog.open(DeleteConfirmModalComponent, {
+        data: {
+          textToShow: `Czy na pewno chcesz usunąć pracownika ${employee.firstName} ${employee.lastName}?`,
+        },
+      });
 
-    dialogRef.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.deleteEmployee(employee.id, employees);
-      }
+      dialogRef.afterClosed().subscribe((result: boolean) => {
+        if (result) {
+          this.deleteEmployee(employee.id, employees).then((deltedEmployee) =>
+            resolve(deltedEmployee)
+          );
+        }
+      });
     });
   }
 
@@ -154,17 +158,20 @@ export class EmployeeManagementService {
    * @param id The ID of the employee to be deleted.
    * @param employees The array of employees from which the employee will be removed.
    */
-  private deleteEmployee(id: number, employees: Employee[]): void {
-    this.employeesService.deleteById(id).subscribe({
-      next: ({ message }) => {
-        this.communicationService.showInfo(message);
-        // Remove the employee from the local employees array
-        employees.splice(
-          employees.findIndex((e) => e.id === id),
-          1
-        );
-      },
-      error: (err) => this.communicationService.showError(err),
+  private deleteEmployee(id: number, employees: Employee[]): Promise<Employee> {
+    return new Promise((resolve, reject) => {
+      this.employeesService.deleteById(id).subscribe({
+        next: ({ message }) => {
+          this.communicationService.showInfo(message);
+
+          const deletedEmployeeIndex = employees.findIndex((e) => e.id === id);
+          resolve(employees[deletedEmployeeIndex]);
+        },
+        error: (err) => {
+          this.communicationService.showError(err);
+          reject(err);
+        },
+      });
     });
   }
 }

@@ -1,4 +1,10 @@
-import { Component, Input } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { CommonModule, NgIf } from "@angular/common";
 import { MatButton, MatButtonModule } from "@angular/material/button";
@@ -29,6 +35,7 @@ export class TeamSectionComponent {
   @Input() teamName: string = "";
   @Input() teamId: number = -1;
   @Input() employees: Employee[] = [];
+  @Output() onEmployeeDelete = new EventEmitter();
 
   showComponent: boolean = true;
 
@@ -46,7 +53,8 @@ export class TeamSectionComponent {
   constructor(
     private employeeManagementService: EmployeeManagementService,
     private teamManagementService: TeamManagementService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   openEditEmployeeModal(employee: Employee): void {
@@ -66,11 +74,11 @@ export class TeamSectionComponent {
   }
 
   confirmEmployeeDelete(employee: Employee): void {
-    this.employeeManagementService.confirmEmployeeDelete(
-      this.dialog,
-      employee,
-      this.employees
-    );
+    this.employeeManagementService
+      .confirmEmployeeDelete(this.dialog, employee, this.employees)
+      .then((deletedEmployee: Employee) => {
+        this.onEmployeeDelete.emit(deletedEmployee);
+      });
   }
 
   teamRename(): void {
