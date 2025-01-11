@@ -121,7 +121,7 @@ export class TeamManagementService {
    */
   addTeam(dialog: MatDialog, fetchTeams: () => void): void {
     const dialogRef = dialog.open(AddEditTeamsModalComponent, {
-      data: { dialogTitle: "Dodaj nowy zespół" },
+      data: { dialogTitle: "Dodaj nowy zespół", oldName: "" },
     });
 
     interface DialogResult {
