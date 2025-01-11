@@ -71,12 +71,9 @@ export class EmployeeManagementService {
    * @param dialog The MatDialog service to open the dialog.
    * @param teamName The name of the team to which the employee is being added.
    * @param teamId The ID of the team to which the employee is being added.
+   * @returns An Observable that emits the result of adding a new employee.
    */
-  openAddEmployeeModal(
-    dialog: MatDialog,
-    teamName: string,
-    teamId: number
-  ): void {
+  openAddEmployeeModal(dialog: MatDialog, teamName: string, teamId: number) {
     const dialogRef = dialog.open(AddEditEmployeeModalComponent, {
       data: {
         dialogTitle: `Dodaj nowego pracownika do ${teamName}`,
@@ -85,11 +82,16 @@ export class EmployeeManagementService {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result: Employee) => {
-      if (result) {
-        this.addEmployee(result);
-      }
-    });
+    return dialogRef.afterClosed().pipe(
+      switchMap((dialogResult: Employee) => {
+        if (dialogResult) {
+          return this.addEmployee(dialogResult).pipe(
+            map((result) => ({ ...result, newEmployee: dialogResult }))
+          );
+        }
+        return of({ success: false });
+      })
+    );
   }
 
   /**
@@ -137,17 +139,22 @@ export class EmployeeManagementService {
   }
 
   /**
-   * Adds a new employee to the local employees array and optionally to the backend.
-   * It also calls the EmployeesService to add the new
-   * employee to the backend, logging the response or error to the console.
+   * Initiates the process of adding a new employee to the system.
+   * This method calls the EmployeesService to add the new employee to the backend.
+   * It handles the response or error from the backend operation, logging the outcome to the user.
    *
-   * @param newEmployee The Employee object to be added.
+   * @param employee The Employee object representing the new employee to be added.
+   * @returns An observable that resolves to an object indicating the success or failure of the operation.
    */
-  private addEmployee(employee: Employee): void {
-    this.employeesService.addNew(employee).subscribe({
-      next: ({ message }) => this.communicationService.showInfo(message),
-      error: (err) => this.communicationService.showError(err),
-    });
+  private addEmployee(employee: Employee) {
+    return this.employeesService.addNew(employee).pipe(
+      tap({
+        next: ({ message }) => this.communicationService.showInfo(message),
+        error: (err) => this.communicationService.showError(err),
+      }),
+      map((response) => ({ success: true })),
+      catchError((error) => of({ success: false }))
+    );
   }
 
   /**

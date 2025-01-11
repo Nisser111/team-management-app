@@ -1,10 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { CommonModule, NgIf } from "@angular/common";
 import { MatButton, MatButtonModule } from "@angular/material/button";
@@ -36,6 +30,7 @@ export class TeamSectionComponent {
   @Input() teamId: number = -1;
   @Input() employees: Employee[] = [];
   @Output() onEmployeeDelete = new EventEmitter<Employee>();
+  @Output() onEmployeeAdd = new EventEmitter<Employee>();
 
   showComponent: boolean = true;
 
@@ -53,8 +48,7 @@ export class TeamSectionComponent {
   constructor(
     private employeeManagementService: EmployeeManagementService,
     private teamManagementService: TeamManagementService,
-    private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private dialog: MatDialog
   ) {}
 
   openEditEmployeeModal(employee: Employee): void {
@@ -66,11 +60,13 @@ export class TeamSectionComponent {
   }
 
   openAddEmployeeModal(): void {
-    this.employeeManagementService.openAddEmployeeModal(
-      this.dialog,
-      this.teamName,
-      this.teamId
-    );
+    this.employeeManagementService
+      .openAddEmployeeModal(this.dialog, this.teamName, this.teamId)
+      .subscribe((result) => {
+        if (result.success && "newEmployee" in result) {
+          this.onEmployeeAdd.emit(result.newEmployee as Employee);
+        }
+      });
   }
 
   confirmEmployeeDelete(employee: Employee): void {

@@ -21,6 +21,7 @@ import { TeamManagementService } from "../../services/team-menagement.service";
         [teamId]="team.id"
         [employees]="getEmployeesByTeamId(team.id)"
         (onEmployeeDelete)="handleEmployeeEdit($event)"
+        (onEmployeeAdd)="handleEmployeeAdd($event)"
       ></app-team-section>
     </div>
     <app-add-new-team-btn (click)="onAddTeam()"></app-add-new-team-btn>
@@ -43,6 +44,10 @@ export class TeamsContainerComponent implements OnInit {
 
   handleEmployeeEdit(deletedEmployee: Employee) {
     this.employees = this.employees.filter((e) => e.id !== deletedEmployee.id);
+  }
+
+  handleEmployeeAdd(newEmployee: Employee) {
+    this.employees = [...this.employees, newEmployee];
   }
 
   fetchTeams() {
