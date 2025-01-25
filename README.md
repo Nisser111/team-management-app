@@ -16,8 +16,8 @@ This project is a full-stack application for managing teams, built using Angular
 ## Future of project
 
  - [ ] Authorization (JWT)
- - [ ] Drag and drop on moving employee between teams
- - [ ] Add autoreload after modeling content
+ - [ ] Logger
+ - [x] Autoreload component after modeling content
  - [ ] Provide unit tests
 
 ## Table of Contents
