@@ -1,51 +1,41 @@
-package pl.menagment_system.team_menagment_system.model;
+package pl.summaryGenerator.model;
 
 import java.util.Date;
 
 /**
- * The Employee class represents an employee entity with various attributes
- * such as name, email, phone, hire date, role, and team association.
+ * Represents combined data for an employee, including personal and professional
+ * details.
  */
-public class Employee {
+public class CombinedData {
 
-    private int id;
     private String lastName;
     private String firstName;
     private String email;
     private String phone;
     private Date hireDate;
     private String role;
-    private int teamId;
+    private String team;
 
     /**
-     * Constructs a new Employee object with all attributes.
+     * Constructs a new CombinedData object with all attributes.
      *
-     * @param id        the unique identifier of the employee
      * @param firstName the first name of the employee
      * @param lastName  the last name of the employee
      * @param email     the email address of the employee
      * @param phone     the phone number of the employee
      * @param hireDate  the hiring date of the employee
      * @param role      the role or position of the employee in the organization
-     * @param teamId    the team ID the employee is associated with
+     * @param team      the team name of the employee
      */
-    public Employee(int id, String firstName, String lastName, String email, String phone, Date hireDate, String role, int teamId) {
-        this.id = id;
+    public CombinedData(String firstName, String lastName, String email, String phone, Date hireDate, String role,
+            String team) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
         this.hireDate = hireDate;
         this.role = role;
-        this.teamId = teamId;
-    }
-
-    public void setId(Object value) {
-        this.id = (int) value;
-    }
-
-    public int getId() {
-        return this.id;
+        this.team = team;
     }
 
     public void setFirstName(Object value) {
@@ -96,11 +86,11 @@ public class Employee {
         return hireDate;
     }
 
-    public void setTeamId(Object value) {
-        this.teamId = (int) value;
+    public void setTeam(Object value) {
+        this.team = (String) value;
     }
 
-    public int getTeamId() {
-        return teamId;
+    public String getTeam() {
+        return team;
     }
 }
