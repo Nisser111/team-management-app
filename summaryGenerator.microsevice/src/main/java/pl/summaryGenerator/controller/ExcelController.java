@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.summaryGenerator.config.RabbitmqProducer;
 import pl.summaryGenerator.repository.CombinedDataRepository;
 import pl.summaryGenerator.service.ExcelService;
 
@@ -21,10 +22,11 @@ import java.io.IOException;
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api")
+@RequestMapping("/excel")
 public class ExcelController {
 
     private final ExcelService excelService;
+    private final RabbitmqProducer rabbitmqProducer;
 
     /**
      * Constructs an ExcelController with the specified ExcelService.
@@ -33,8 +35,9 @@ public class ExcelController {
      * @param combinedDataRepository the repository for combined data (not used in
      *                               this controller)
      */
-    public ExcelController(ExcelService excelService, CombinedDataRepository combinedDataRepository) {
+    public ExcelController(ExcelService excelService, CombinedDataRepository combinedDataRepository, RabbitmqProducer rabbitmqProducer) {
         this.excelService = excelService;
+        this.rabbitmqProducer = rabbitmqProducer;
     }
 
     /**
@@ -54,5 +57,18 @@ public class ExcelController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=summary.xlsx")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(excelFile);
+    }
+
+    /**
+     *
+     * @return Endpoint to handle rabbitmq sender
+     * @throws IOException
+     */
+    @GetMapping("/get")
+    public ResponseEntity<byte[]> getExcel() throws IOException {
+
+        rabbitmqProducer.sender();
+
+        return (ResponseEntity<byte[]>) ResponseEntity.ok();
     }
 }

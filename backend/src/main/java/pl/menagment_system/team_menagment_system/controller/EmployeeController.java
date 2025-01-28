@@ -16,8 +16,10 @@ import java.util.Optional;
 
 /**
  * Controller class for managing employee-related operations.
- * This class handles HTTP requests for operations such as retrieving all employees,
- * retrieving employees by team, adding new employees, deleting employees, and updating employees.
+ * This class handles HTTP requests for operations such as retrieving all
+ * employees,
+ * retrieving employees by team, adding new employees, deleting employees, and
+ * updating employees.
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -34,15 +36,18 @@ public class EmployeeController {
         this.employeeService = new EmployeeService(employeeRepository);
     }
 
-
     /**
-     * Retrieves all employees from the repository and returns a response containing the result.
-     * The response includes employees if found, or appropriate error messages in case of failure.
+     * Retrieves all employees from the repository and returns a response containing
+     * the result.
+     * The response includes employees if found, or appropriate error messages in
+     * case of failure.
      *
      * @return ResponseEntity containing a Map with the following keys:
-     *         - "success": a boolean indicating whether the operation was successful
+     *         - "success": a boolean indicating whether the operation was
+     *         successful
      *         - "message": a string describing the operation status
-     *         - "data": a list of Employee objects if available, or an empty list otherwise.
+     *         - "data": a list of Employee objects if available, or an empty list
+     *         otherwise.
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllEmployees() {
@@ -76,11 +81,13 @@ public class EmployeeController {
      * Deletes an employee identified by the given ID from the repository.
      * If the employee is successfully deleted, the response will contain
      * the employee details and a success message. If not found, a 404 error
-     * message is returned. In case of any unexpected error, a 500 error response is returned.
+     * message is returned. In case of any unexected error, a 500 error response is
+     * returned.
      *
      * @param id the unique identifier of the employee to be deleted
      * @return a ResponseEntity containing success information,
-     *         the employee data if deletion is successful, or an error message otherwise
+     *         the employee data if deletion is successful, or an error message
+     *         otherwise
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteEmployee(@PathVariable int id) {
@@ -109,15 +116,22 @@ public class EmployeeController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
     /**
      * Adds a new employee to the system after validating the provided data.
-     * The email of the employee must be unique, and the request data must meet the validation constraints.
+     * The email of the employee must be unique, and the request data must meet the
+     * validation constraints.
      *
-     * @param dto The EmployeeRequestDTO containing the necessary details of the employee to be added.
-     *            This includes first name, last name, email, phone, hire date, role, and team ID.
-     * @return A ResponseEntity containing a Map with the operation's status, a message, and the added employee object if successful.
-     *         If there's a validation error, it returns a 400 status with an error message.
-     *         If there's an unexpected error, it returns a 500 status with an error message.
+     * @param dto The EmployeeRequestDTO containing the necessary details of the
+     *            employee to be added.
+     *            This includes first name, last name, email, phone, hire date,
+     *            role, and team ID.
+     * @return A ResponseEntity containing a Map with the operation's status, a
+     *         message, and the added employee object if successful.
+     *         If there's a validation error, it returns a 400 status with an error
+     *         message.
+     *         If there's an unexpected error, it returns a 500 status with an error
+     *         message.
      */
     @PostMapping
     public ResponseEntity<Map<String, Object>> addEmployee(
@@ -135,12 +149,10 @@ public class EmployeeController {
                     dto.getPhone(),
                     dto.getHireDate(),
                     dto.getRole(),
-                    dto.getTeamId()
-            );
+                    dto.getTeamId());
 
             String fullName = employee.getFirstName() + " " + employee.getLastName();
             employeeRepository.save(employee);
-
 
             // Build success response
             response.put("success", true);
@@ -161,14 +173,15 @@ public class EmployeeController {
         }
     }
 
-
     /**
      * Updates an existing employee's details based on the given information.
      * Only the provided fields in the request will be updated.
      *
-     * @param id The ID of the employee to be updated.
-     * @param employeeRequestDTO The data transfer object containing the employee details to be updated.
-     * @return A ResponseEntity containing a map with the operation result, including success status, message,
+     * @param id                 The ID of the employee to be updated.
+     * @param employeeRequestDTO The data transfer object containing the employee
+     *                           details to be updated.
+     * @return A ResponseEntity containing a map with the operation result,
+     *         including success status, message,
      *         and updated employee data in case of success.
      */
     @PatchMapping("/{id}")
@@ -218,7 +231,7 @@ public class EmployeeController {
             employeeRepository.update(existingEmployee);
 
             response.put("success", true);
-            response.put("message", "Pracownik "+ fullName + " został pomyślnie zaktualizowany.");
+            response.put("message", "Pracownik " + fullName + " został pomyślnie zaktualizowany.");
             response.put("data", existingEmployee);
             return ResponseEntity.ok(response);
 
