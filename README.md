@@ -1,7 +1,8 @@
 # Team Management App
 
-This project is a full-stack application for managing teams, built using Angular for the frontend and Spring Boot for the backend. It provides functionalities to manage teams and employees, supporting CRUD operations. This project was created as a recruitment project for internships. I'll be glad for any tips and help me improve my project.
+This project is a full-stack application for managing teams, built using Angular for the frontend and Spring Boot for the backend. It is designed with a microservices architecture, allowing for scalable and efficient management of teams and employees. The application supports CRUD operations and utilizes RabbitMQ for communication between microservices. 
 
+This project was created as a recruitment project for internships, and is still in development. I welcome any tips and feedback to help improve it.
 
 ## Tech Stack
 
@@ -12,13 +13,29 @@ This project is a full-stack application for managing teams, built using Angular
 ![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/-rabbitmq-%23FF6600?style=flat&logo=rabbitmq&logoColor=white)
+![Jaeger](https://img.shields.io/badge/Jaeger-FF6600style=flat&logo=rabbitmq&logoColor=white)
+
+
+## History of project
+
+### Recruiting requirements
+
+The app allows users to add new teams, add employees, and perform CRUD operations. The app uses Java (Spring Boot) for the backend and Angular for the frontend, with detailed API documentation.
+
+### Logger and tracing
+
+At first development of the app I had to add logger and tracing. I used Logback to configure pattern of logs including job number. To handle logging, I've implemented a Spring Boot Actuator.
+
+### New architecture: microservices
+
+Next, I had to add a new microservice to the application. I've made a service to generate an Excel file contains summary of all employees. To the communication between microservices, I've chosen RabbitMQ.
 
 ## Future of project
 
- - [ ] Authorization (JWT)
- - [ ] Logger
- - [x] Autoreload component after modeling content
- - [ ] Provide unit tests
+- [ ] Authorization
+- [x] Autoreload component after modeling content
+- [ ] Provide unit tests
 
 ## Table of Contents
 
@@ -37,58 +54,70 @@ This project is a full-stack application for managing teams, built using Angular
 To set up and run the frontend application, follow these steps:
 
 1. **Requirements**
-   - Node.js (version 14 or higher)
-   - Angular CLI (version 19.0.4)
+   
+- Node.js (version 14 or higher)
+- Angular CLI (version 19.0.4)
 
 2. **Clone the Repository**
-   ```bash
-    git clone https://github.com/Nisser111/team-menagement-app.git
-    cd team-management-api/frontend
-   ```
+   
+```bash
+git clone https://github.com/Nisser111/team-management-app.git
+cd team-management-api/frontend
+```
 
 3. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+   
+```bash
+npm install
+```
 
-4. **Run the Development Server**
-   ```bash
-   ng serve
-   ```
+1. **Run the Development Server**
+   
+```bash
+ng serve
+```
 
 5. **Access the Application**
-   Open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+   
+    Open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ### Backend
 
 To set up and run the backend application, follow these steps:
+
 #### 1. Clone the repository
 
 Clone the API repository to your local development environment:
 
 ```shell
 git clone https://github.com/Nisser111/team-menagement-app.git
-cd team-management-api/backend
+cd team-management-api/backend/team-management-api
 ```
 
 #### 2. Configure the database
 
-- Create a new database `menagement_system` and import neccessery data from [these script](/utils/database-run-script.sql).
-  
-  
+- Create a new database `menagement_system` and import necessary data from [this script](/utils/database-run-script.sql).
 
 - Update the database configurations in your `application.properties` 
-  file located at `src/main/resources/`. Example:
+  file located at `src/main/resources/`. Example:
 
 ```properties
-  spring.datasource.url=jdbc:mysql://localhost:3306/team_management
-  spring.datasource.username=<your_username>
-  spring.datasource.password=<your_password>
-  spring.jpa.hibernate.ddl-auto=update
-  spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+  spring.datasource.url=jdbc:mysql://localhost:3306/team_management
+  spring.datasource.username=<your_username>
+  spring.datasource.password=<your_password>
+  spring.jpa.hibernate.ddl-auto=update
+  spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-#### 3. Build the project
+#### 3. Install and run RabbitMQ
+
+Follow steps on official [RabbitMQ website](https://www.rabbitmq.com/docs/download). The application was configured to work on default settings.
+
+#### 4. Install and run Jeager
+
+Follow steps on official [Jeager website](https://www.jaegertracing.io/docs/1.6/getting-started/). The application was configured to work on default settings.
+
+#### 5. Build the project
 
 Use Maven to build the project:
 
@@ -96,7 +125,7 @@ Use Maven to build the project:
 mvn clean install
 ```
 
-#### 4. Run the application
+#### 6. Run the application
 
 Start the application using the following command:
 
