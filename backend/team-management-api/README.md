@@ -14,7 +14,7 @@ This is the guide to help you quickly set up, run, and interact with the Team an
      - [Configure the Database](#2-configure-the-database)
      - [Build the Project](#3-build-the-project)
      - [Run the Application](#4-run-the-application)
-   - [Database Configuration](#2-Database-configuration).
+   - [Database Configuration](#2-Database-configuration)
 
 2. **Employee management endpoints**
    
@@ -30,13 +30,20 @@ This is the guide to help you quickly set up, run, and interact with the Team an
    - [Update Team](#update-team)
    - [Delete Team](#delete-team)
 
+4. **Summary** 
+   
+   - [Download employees summary](#download-employee-summary) 
+
+5. **Deployment**
+   - [Deployment](#deployment)
+
 ---
 
 ## Requirements
 
 Before starting, ensure you have the following installed on your system:
 
-- **Java SDK 23**
+- **Java SDK 17**
 
 - Maven 3.x (for dependency management and building the project)
 
@@ -986,6 +993,83 @@ curl -X DELETE http://localhost:8080/teams/1
 ```
 
 ---
+
+# Download Employee Summary
+
+### Endpoint
+
+`GET /summary/download`
+
+#### Description
+
+This endpoint generates and returns an Excel file containing a summary of all employees in the system. The Excel sheet includes the following columns:
+
+- **First Name** – Employee's first name.
+- **Last Name** – Employee's last name.
+- **Email** – Employee's email address.
+- **Phone** – Contact number of the employee.
+- **Hire Date** – Date when the employee was hired.
+- **Role** – Employee's job role.
+- **Team Name** – Name of the team the employee belongs to.
+
+---
+
+### Request
+
+#### Method: `GET`
+
+#### URL: `/summary/download`
+
+#### Headers
+
+| Header Name | Required | Description                                                                                                           |
+| ----------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| Accept      | Yes      | Must be set to `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` to indicate an Excel file request. |
+
+#### Request Body
+
+None. This API does not accept any request body.
+
+### Response
+
+#### Status Codes
+
+1. **200 OK**
+   
+   - **Description**: The request was successful.
+   
+   - **Response Body Example (Binary file download)**:
+   
+          The response body contains the binary Excel file (`.xlsx`).
+
+2. **500 Internal Server Error**
+   
+   - **Description**: An unexpected error occurred while generating the summary file.
+   
+   - **Response Body Example**:
+
+```json
+{
+    "error": "Error generating Excel file: "
+}
+```
+
+- **Response Headers**
+  
+  - **Content-Type**: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+  - **Content-Disposition**: `attachment; filename="summary.xlsx"`
+
+---
+
+#### CURL Example
+
+```bash
+curl -X GET http://localhost:8080/summary/download \
+-H "Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" \
+-o employee-summary.xlsx 
+```
+
+ ---
 
 ## **Deployment**
 
