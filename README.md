@@ -31,10 +31,14 @@ At first development of the app I had to add logger and tracing. I used Logback 
 
 Next, I had to add a new microservice to the application. I've made a service to generate an Excel file contains summary of all employees. To the communication between microservices, I've chosen RabbitMQ.
 
+### Api Gateway
+
+I've implemented api gateway to manage multiple microservices with different ports. I've made it using Spring Boot Cloud Starter Gateway. 
+
 ## Future of project
 
 - [ ] Authorization
-- [x] Autoreload component after modeling content
+- [x] Auto reload component after modeling content
 - [ ] Provide unit tests
 
 ## Table of Contents
