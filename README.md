@@ -54,32 +54,27 @@ Next, I had to add a new microservice to the application. I've made a service to
 To set up and run the frontend application, follow these steps:
 
 1. **Requirements**
-   
-- Node.js (version 14 or higher)
-- Angular CLI (version 19.0.4)
+   - Node.js (version 14 or higher)
+   - Angular CLI (version 19.0.4)
 
 2. **Clone the Repository**
-   
-```bash
-git clone https://github.com/Nisser111/team-management-app.git
-cd team-management-api/frontend
-```
+    ```bash
+    git clone https://github.com/Nisser111/team-menagement-app.git
+    cd team-management-api/frontend
+    ```
 
 3. **Install Dependencies**
-   
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-1. **Run the Development Server**
-   
-```bash
-ng serve
-```
+4. **Run the Development Server**
+   ```bash
+   ng serve
+   ```
 
 5. **Access the Application**
-   
-    Open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+   Open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ### Backend
 
@@ -90,7 +85,7 @@ To set up and run the backend application, follow these steps:
 Clone the API repository to your local development environment:
 
 ```shell
-git clone https://github.com/Nisser111/team-menagement-app.git
+git clone https://github.com/Nisser111/team-management-app.git
 cd team-management-api/backend/team-management-api
 ```
 
