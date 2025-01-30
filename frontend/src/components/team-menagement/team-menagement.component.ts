@@ -1,17 +1,13 @@
 import { Component } from "@angular/core";
 import { FilterHeaderComponent } from "../filter-header/filter-header.component";
-import { HelloUserHeaderComponent } from "../hello-user-header/hello-user-header.component";
 import { TeamsContainerComponent } from "../teams-container/teams-container.component";
+import { MainMenuComponent } from "../main-menu/main-menu.component";
 
 @Component({
   selector: "app-team-menagement",
-  imports: [
-    FilterHeaderComponent,
-    HelloUserHeaderComponent,
-    TeamsContainerComponent,
-  ],
+  imports: [FilterHeaderComponent, TeamsContainerComponent, MainMenuComponent],
   template: `
-    <app-hello-user-header></app-hello-user-header>
+    <app-main-menu></app-main-menu>
     <app-filter-header
       (teamSelected)="onTeamSelected($event)"
     ></app-filter-header>

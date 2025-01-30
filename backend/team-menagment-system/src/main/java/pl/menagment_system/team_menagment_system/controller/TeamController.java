@@ -18,7 +18,6 @@ import java.util.Optional;
  * It allows the retrieval, addition, deletion, and partial updating of team entities.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/teams")
 public class TeamController {
 

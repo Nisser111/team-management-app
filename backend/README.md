@@ -35,6 +35,7 @@ This is the guide to help you quickly set up, run, and interact with the Team an
    - [Download employees summary](#download-employee-summary) 
 
 5. **Deployment**
+   
    - [Deployment](#deployment)
 
 ---
@@ -1022,9 +1023,9 @@ This endpoint generates and returns an Excel file containing a summary of all em
 
 #### Headers
 
-| Header Name | Required | Description                                                                                                           |
-| ----------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Accept      | Yes      | Must be set to `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` to indicate an Excel file request. |
+| Header Name | Required | Description                                                                                                                                                                                 |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accept      | Yes      | Must be set to `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` to indicate an Excel file request. Must be set to `application/json` to handle error json type response. |
 
 #### Request Body
 
@@ -1050,13 +1051,13 @@ None. This API does not accept any request body.
 
 ```json
 {
-    "error": "Error generating Excel file: "
+    "error": "Błąd podczas generowania podsumowania."
 }
 ```
 
 - **Response Headers**
   
-  - **Content-Type**: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+  - **Content-Type**: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/json`
   - **Content-Disposition**: `attachment; filename="summary.xlsx"`
 
 ---
@@ -1065,8 +1066,8 @@ None. This API does not accept any request body.
 
 ```bash
 curl -X GET http://localhost:8080/summary/download \
--H "Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" \
--o employee-summary.xlsx 
+-H "Accept: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/json" \
+-o summary.xlsx 
 ```
 
  ---

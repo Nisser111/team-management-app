@@ -25,7 +25,6 @@ import java.util.Map;
  * it as a byte array in the response.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/summary")
 public class ExcelController {
 
@@ -69,7 +68,7 @@ public class ExcelController {
         } catch (IOException e) {
             // Handle the error and return a custom error response
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Error generating Excel file: " + e.getMessage());
+            errorResponse.put("error", "Błąd podczas generowania podsumowania.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
