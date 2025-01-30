@@ -1,0 +1,21 @@
+@use "../../styles/mixins" as *;
+@use "../../styles/global-varriables.scss" as *;
+
+mat-toolbar {
+  background: #fff;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: $mainShadow;
+  display: flex;
+  justify-content: space-between;
+
+  h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .button-wrapper button {
+    font-size: 0.75em;
+    margin-left: 0.5em;
+  }
+}
