@@ -36,5 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/api-gateway/logs/
 /.idea/
+/api-gateway/logs/
+/get-excel-summary/logs/
+/get-excel-summary/logs/
+/team-menagment-system/logs/

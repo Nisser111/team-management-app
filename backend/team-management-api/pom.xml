@@ -12,5 +12,6 @@
   <modules>
     <module>team-menagment-system</module>
     <module>get-excel-summary</module>
+    <module>api-gateway</module>
   </modules>
 </project>
