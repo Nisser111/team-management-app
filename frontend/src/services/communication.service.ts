@@ -45,7 +45,7 @@ export class CommunicationService {
     const data = {
       header: "Wystąpił błąd",
       message: "",
-      specyficError: resError || "nieokreślony",
+      specificError: resError || "nieokreślony",
     };
 
     if (success === undefined) {
@@ -53,7 +53,7 @@ export class CommunicationService {
     }
 
     // Opening a snack bar with the error message and an action to view more details
-    const snackBarRef = this.snackBar.open(message, "Więcej", {
+    const snackBarRef = this.snackBar.open(message || resError, "Więcej", {
       duration: 3000,
     });
 

@@ -22,15 +22,12 @@ export class GetSummaryBtnComponent {
   handleClick() {
     this.summaryService.getFullSummary().subscribe({
       next: (data) => {
-        console.log(data);
-
-        if ("error" in data) {
-          this.communicationService.showError(data.error);
-        } else {
-          this.downloadFileService.download(data, "Podsumowanie.xlsx");
+        const date = new Date(Date.now()).toLocaleDateString("pl-PL"); // Format date to DD-MM-RRRR
+        if (data instanceof Blob) {
+          this.downloadFileService.download(data, `Podsumowanie ${date}.xlsx`);
         }
       },
-      error: (data) => this.communicationService.showError(data.error),
+      error: (error) => this.communicationService.showError(error),
     });
   }
 }
