@@ -22,7 +22,6 @@ import java.util.Optional;
  * updating employees.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/employees")
 public class EmployeeController {
 

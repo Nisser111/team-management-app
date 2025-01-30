@@ -25,7 +25,6 @@ import java.util.Map;
  * it as a byte array in the response.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/summary")
 public class ExcelController {
 
