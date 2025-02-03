@@ -53,3 +53,5 @@ utils/hide
 $RECYCLE.BIN/
 Thumbs.db
 ehthumbs.db
+
+.obsidian
