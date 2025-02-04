@@ -129,29 +129,32 @@ Import database script: [Database-run-script](https://github.com/Nisser111/team-
    - Stores information about teams within the organization.
    
    **Schema**:
-   
-   | Column Name | Data Type     | Constraints                 |
-   | ----------- | ------------- | --------------------------- |
-   | `ID`        | `int`         | Primary Key, Auto Increment |
-   | `name`      | `varchar(75)` | Not Null                    |
 
-2. **`employees` Table**
+| Column name | Data type     | Constraints                 |
+| ----------- | ------------- | --------------------------- |
+| `ID`        | `int`         | Primary key, Auto increment |
+| `name`      | `varchar(75)` | Not null                    |
+
+
+
+3. **`employees` Table**
    
    - Stores information about employees and their association with teams.
    
    **Schema**:
-   
-   | Column Name  | Data Type      | Constraints                        |
-   | ------------ | -------------- | ---------------------------------- |
-   | `ID`         | `int`          | Primary Key, Auto Increment        |
-   | `first_name` | `varchar(50)`  | Not Null                           |
-   | `last_name`  | `varchar(50)`  | Not Null                           |
-   | `email`      | `varchar(100)` | Not Null, Unique                   |
-   | `phone`      | `varchar(15)`  | Optional                           |
-   | `hire_date`  | `date`         | Not Null                           |
-   | `role`       | `varchar(50)`  | Not Null                           |
-   | `team_id`    | `int`          | Foreign Key References `teams(ID)` |
-   
+
+| Column name  | Data type      | Constraints                        |
+| ------------ | -------------- | ---------------------------------- |
+| `ID`         | `int`          | Primary key, Auto increment        |
+| `first_name` | `varchar(50)`  | Not null                           |
+| `last_name`  | `varchar(50)`  | Not null                           |
+| `email`      | `varchar(100)` | Not null, Unique                   |
+| `phone`      | `varchar(15)`  | Optional                           |
+| `hire_date`  | `date`         | Not null                           |
+| `role`       | `varchar(50)`  | Not null                           |
+| `team_id`    | `int`          | Foreign key references `teams(ID)` |
+
+
    **Relationships**:
    
    - `team_id`: Foreign key referencing the `teams` table. If a team is deleted, associated employees will also be removed (`ON DELETE CASCADE`).
@@ -327,6 +330,7 @@ None. This API endpoint does not accept a body for the `GET` request.
 curl -X GET http://localhost:8080/employees
 ```
 
+---
 # Add New Employee
 
 ### Endpoint
@@ -841,9 +845,6 @@ curl -X POST http://localhost:8080/teams \
 }'
 ```
 
-Here is the REST API documentation for the `PATCH /teams/{id}` 
-route.
-
 ---
 
 # Update Team
@@ -1044,7 +1045,7 @@ curl -X DELETE http://localhost:8080/teams/1
 
 `GET /summary/download`
 
-#### Description
+### Description
 
 This endpoint generates and returns an Excel file containing a summary of all employees in the system. The Excel sheet includes the following columns:
 

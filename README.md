@@ -14,8 +14,9 @@ This project was created as a recruitment project for internships, and is still 
 ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/-rabbitmq-%23FF6600?style=flat&logo=rabbitmq&logoColor=white)
-![Jaeger](https://img.shields.io/badge/Jaeger-FF6600style=flat&logo=rabbitmq&logoColor=white)
+![Jaeger](https://img.shields.io/badge/Jaeger-FF6600style=flat&logo=Jeager&logoColor=white)
 [![SendGrid](https://img.shields.io/badge/SendGrid-Email%20API-blue)](https://sendgrid.com/)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white)
 
 
 ## History of project
@@ -140,6 +141,11 @@ mvn spring-boot:run
 The application will run on the default port **8080** unless otherwise specified in the `application.properties`.
 
 > For full API documentation [look there](/backend/README.md). 
+
+#### 7. Testing
+
+Test the API using Postman. [Go there!](https://documenter.getpostman.com/view/40339448/2sAYX6ng2j)
+
 
 ---
 
