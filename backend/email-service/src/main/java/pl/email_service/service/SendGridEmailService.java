@@ -59,7 +59,7 @@ public class SendGridEmailService {
         Email to = new Email(toEmail);
         Mail mail = new Mail();
         mail.setFrom(from);
-        mail.setTemplateId("d-ead48a5831e5448aa420d6b3889b55d8");
+        mail.setTemplateId(System.getenv("MAIL_TEMPLATE_ID"));
 
         Personalization personalization = new Personalization();
         personalization.addTo(to);
