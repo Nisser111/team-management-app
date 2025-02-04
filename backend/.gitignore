@@ -42,3 +42,4 @@ build/
 /get-excel-summary/logs/
 /team-menagment-system/logs/
 /email-service/logs/
+/.env

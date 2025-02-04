@@ -1051,7 +1051,7 @@ None. This API does not accept any request body.
 
 ```json
 {
-    "error": "Błąd podczas generowania podsumowania."
+    "error": "Error during generating summary."
 }
 ```
 
