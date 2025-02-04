@@ -15,6 +15,7 @@ This project was created as a recruitment project for internships, and is still 
 ![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
 ![RabbitMQ](https://img.shields.io/badge/-rabbitmq-%23FF6600?style=flat&logo=rabbitmq&logoColor=white)
 ![Jaeger](https://img.shields.io/badge/Jaeger-FF6600style=flat&logo=rabbitmq&logoColor=white)
+[![SendGrid](https://img.shields.io/badge/SendGrid-Email%20API-blue)](https://sendgrid.com/)
 
 
 ## History of project
@@ -31,9 +32,13 @@ At first development of the app I had to add logger and tracing. I used Logback 
 
 Next, I had to add a new microservice to the application. I've made a service to generate an Excel file contains summary of all employees. To the communication between microservices, I've chosen RabbitMQ.
 
-### Api Gateway
+### API Gateway
 
-I've implemented api gateway to manage multiple microservices with different ports. I've made it using Spring Boot Cloud Starter Gateway. 
+I've implemented API gateway to manage multiple microservices with different ports. I've made it using Spring Boot Cloud Starter Gateway. 
+
+### External API 
+
+My app has an option to send an email notification when new employee has his/her new team.  This is another microservice in the application. I used Twilio service SendGrid to provide this functionality.
 
 ## Future of project
 

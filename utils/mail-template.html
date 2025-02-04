@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twój nowy zespół</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: #6a11cb linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #6a11cb;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
+        }
+        .button:hover {
+            background: #2575fc;
+        }
+        .footer {
+            background: #6a11cb linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            text-align: center;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 14px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+        <div class="header">Witamy w Twoim nowym zespole!</div>
+        <div class="content">
+            <p>Witaj <strong>{{employee_name}}</strong>,</p>
+            <p>Z przyjemnością informujemy, że zostałeś/aś dodany/a do zespołu <strong>{{team_name}}</strong>.</p>
+            <p>Współpracuj, twórz innowacje i wywieraj wpływ razem ze swoimi nowymi kolegami.</p>
+            <a href="http://localhost:4200" class="button">Przejdź do panelu</a>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 System zarządzania zespołami | All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
