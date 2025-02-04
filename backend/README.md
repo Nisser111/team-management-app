@@ -1,6 +1,6 @@
-# Getting Started with the Team Management API
+# Getting started with the Team Management API
 
-This is the guide to help you quickly set up, run, and interact with the Team anagement API, which provides functionalities to manage teams in the system. The API supports CRUD operations, enabling clients to retrieve, create, update, and delete team entities.
+This is the guide to help you quickly set up, run, and interact with the Team management API, which provides functionalities to manage teams in the system. The API supports CRUD operations, enabling clients to retrieve, create, update, and delete team entities.
 
 --- 
 
@@ -15,6 +15,7 @@ This is the guide to help you quickly set up, run, and interact with the Team an
      - [Build the Project](#3-build-the-project)
      - [Run the Application](#4-run-the-application)
    - [Database Configuration](#2-Database-configuration)
+   - [SendGrid configuration](#2-SendGrid-configuration)
 
 2. **Employee management endpoints**
    
@@ -30,9 +31,10 @@ This is the guide to help you quickly set up, run, and interact with the Team an
    - [Update Team](#update-team)
    - [Delete Team](#delete-team)
 
-4. **Summary** 
+4. **Other functionality**
    
-   - [Download employees summary](#download-employee-summary) 
+   - [Download employees summary](#download-employee-summary)
+   - [Send email about add employee to his new team](#-2-Send-email-about-add-employee-to-hhis-new-team)
 
 5. **Deployment**
    
@@ -194,6 +196,47 @@ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 ```
 
 ---
+## SendGrid configuration
+
+The API provides functionality to send an email notification when employee is assigning to his/her new team. It integrates **SendGrid API** to manage mailing. There is guid how to configure this service. 
+
+---
+### 1. Get API
+
+Register or log in to your account in **[sendgrid.com](https://sendgrid.com)** service. Get your API key and set them in environment variable.
+
+```
+SENDGRID_API_KEY=your api key
+```
+### 2. Configure the mail template.
+
+Follow the instruction from the service website.  Next, copy the template id and add as environment variable.
+
+```
+MAIL_TEMPLATE_ID=the template ID
+```
+
+Make your own mail template or copy code from this file [mail-template.html](../utils/mail-template.html). If you chose to make your own you would include this properties:
+
+```json
+{
+    "employee_name": "John",
+    "team_name": "Development Team"
+}
+```
+
+![[mail-template-preview.png]]
+
+Set sender mail in environment variables. You should enter the mail configurated on you SendGrid account. 
+
+```
+SENDER_EMAIL=your-mail@example.com
+```
+### 3. Integrate your API with external API
+
+Go to *Integration Guide* tab and follow step-by-step guide there to connect your app with the SendGrid. At the end verify connection by sending any request. 
+
+---
 
 # Get all Employees
 
@@ -233,7 +276,7 @@ None. This API endpoint does not accept a body for the `GET` request.
 
 #### Status Codes:
 
-1. **200 OK**
+4. **200 OK**
    
    - **Description**: The request was successful, and the server has returned the list of all employees.
    
@@ -264,7 +307,7 @@ None. This API endpoint does not accept a body for the `GET` request.
  ]
 ```
 
-2. **500 Internal Server Error**
+5. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred on the server while retrieving employees.
    
@@ -344,7 +387,7 @@ A `JSON` object representing the new employee's details. All fields are required
 
 #### Status Codes
 
-1. **200 OK**
+6. **200 OK**
    
    - **Description**: The employee was successfully created.
    
@@ -356,7 +399,7 @@ A `JSON` object representing the new employee's details. All fields are required
  }
 ```
 
-2. **400 Bad Request**
+7. **400 Bad Request**
    
    - **Description**: The request contains invalid data, such as a duplicate email, nvalid fields, or missing required fields.
    
@@ -368,7 +411,7 @@ A `JSON` object representing the new employee's details. All fields are required
  }
 ```
 
-3. **500 Internal Server Error**
+8. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while processing the request.
    
@@ -473,7 +516,7 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 #### Status Codes
 
-1. **200 OK**
+9. **200 OK**
    
    - **Description**: The employee was successfully updated.
    
@@ -485,7 +528,7 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 }
 ```
 
-2. **400 Bad Request**
+10. **400 Bad Request**
    
    - **Description**: The request contains invalid data, such as a duplicate email, invalid fields, or missing required fields.
    
@@ -497,7 +540,7 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 }
 ```
 
-3. **404 Not Found**
+11. **404 Not Found**
    
    - **Description**: No employee exists with the specified ID.
    
@@ -509,7 +552,7 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
  }
 ```
 
-4. **500 Internal Server Error**
+12. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while processing the request.
    
@@ -589,7 +632,7 @@ None.
 
 #### Status Codes
 
-1. **200 OK**
+13. **200 OK**
    
    - **Description**: The employee was successfully 
      deleted.
@@ -602,7 +645,7 @@ None.
 }
 ```
 
-2. **404 Not Found**
+14. **404 Not Found**
    
    - **Description**: The employee with the specified ID 
      does not exist in the system.
@@ -655,7 +698,7 @@ No specific headers are required for this request. Optional headers may include:
 
 #### Status Codes
 
-1. **200 OK**
+15. **200 OK**
    
    - **Description**: Returns a list of all teams in the 
      system.
@@ -679,7 +722,7 @@ No specific headers are required for this request. Optional headers may include:
 ]
 ```
 
-2. 500 Internal Server Error
+16. 500 Internal Server Error
    
    - **Description**: An unexpected server error occurred 
      while processing the request.
@@ -750,7 +793,7 @@ A `JSON` object representing the new team's details. All fields are required.
 
 #### Status Codes
 
-1. **200 OK**
+17. **200 OK**
    
    - **Description**: The team was successfully added.
    
@@ -762,7 +805,7 @@ A `JSON` object representing the new team's details. All fields are required.
 }
 ```
 
-2. **400 Bad Request**
+18. **400 Bad Request**
    
    - **Description**: The request body contains invalid or missing data. Validation errors will be returned in detail.
    
@@ -774,7 +817,7 @@ A `JSON` object representing the new team's details. All fields are required.
 }
 ```
 
-3. **500 Internal Server Error**
+19. **500 Internal Server Error**
    
    - **Description**: An unexpected server error occurred while processing the request.
    
@@ -857,7 +900,7 @@ A `JSON` object representing the new employee's details. All fields are required
 
 #### Status Codes
 
-1. **200 OK**
+20. **200 OK**
    
    - **Description**: The team was successfully updated.
    
@@ -869,7 +912,7 @@ A `JSON` object representing the new employee's details. All fields are required
 }
 ```
 
-2. **404 Not Found**
+21. **404 Not Found**
    
    - **Description**: The team with the specified ID does 
      not exist.
@@ -882,7 +925,7 @@ A `JSON` object representing the new employee's details. All fields are required
 }
 ```
 
-3. **400 Bad Request**
+22. **400 Bad Request**
    
    - **Description**: The provided data is invalid or the 
      update operation failed.
@@ -947,7 +990,7 @@ No specific headers are required for this request. Optional headers may include:
 
 #### Status Codes
 
-1. **200 OK**
+23. **200 OK**
    
    - **Description**: The team was successfully deleted.
    
@@ -959,7 +1002,7 @@ No specific headers are required for this request. Optional headers may include:
 }
 ```
 
-2. **404 Not Found**
+24. **404 Not Found**
    
    - **Description**: The team with the specified ID does 
      not exist.
@@ -972,7 +1015,7 @@ No specific headers are required for this request. Optional headers may include:
 }
 ```
 
-3. **500 Internal Server Error**
+25. **500 Internal Server Error**
    
    - **Description**: An unexpected server error occurred 
      during the deletion process.
@@ -1035,7 +1078,7 @@ None. This API does not accept any request body.
 
 #### Status Codes
 
-1. **200 OK**
+26. **200 OK**
    
    - **Description**: The request was successful.
    
@@ -1043,7 +1086,7 @@ None. This API does not accept any request body.
    
           The response body contains the binary Excel file (`.xlsx`).
 
-2. **500 Internal Server Error**
+27. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while generating the summary file.
    
@@ -1072,11 +1115,82 @@ curl -X GET http://localhost:8080/summary/download \
 
  ---
 
+# Send email about add employee to his new team
+
+### Endpoint
+
+`POST /email/send`
+
+---
+
+### Description
+
+This endpoint allows option to send an email notification to employee, when he/she was assigned to new team. The endpoint require three params: employee email, name and his/her new team. If the mail was send successfully, a confirmation message is returned. Otherwise error response is returned. 
+
+---
+
+### Request
+
+#### Method: `POST`
+
+#### URL: `/email/send?toEmail={email}&employee_name={name}&team_name={team name}`
+
+#### Path Parameters
+
+| Parameter       | Type     | Required | Description                                           |
+| --------------- | -------- | -------- | ----------------------------------------------------- |
+| `toEmail`       | `string` | Yes      | Employee email, which is reciver of the notification. |
+| `employee_name` | `string` | Yes      | Employee name, which appears in message.              |
+| `team_name`     | `string` | Yes      | Employee's new team name.                             |
+
+#### Headers
+
+No specific headers are required for this request. 
+
+---
+
+### Response
+
+#### Status Codes
+
+28. **200 OK**
+   
+   - **Description**: The mail message was sent successfully.
+   
+   - **Response Body Example**:
+
+```json
+{
+  "message": "The message has been sent successfully."
+}
+```
+
+29. **500 Internal Server Error**
+   
+   - **Description**: An unexpected server error occurred during the mail sending.
+   
+   - **Response Body Example**:
+
+```json
+{
+  "error": "Error during sending an email."
+}
+```
+
+---
+
+### CURL Example
+
+```shell
+curl -X POST http://localhost:8080/email/send?toEmail=name@example.com&employee_name=adam&team_name=Development Team
+```
+
+---
 ## **Deployment**
 
 To deploy the application:
 
-1. Package it into a JAR file:
+30. Package it into a JAR file:
 
 ```shell
 mvn package
@@ -1084,11 +1198,11 @@ mvn package
 
 The generated JAR file will be under the `target/` directory.
 
-2. Run the JAR file:
+31. Run the JAR file:
 
 ```shell
 java -jar target/team-management-api.jar
 ```
 
-3. Ensure the application is connected to a production-ready database 
+32. Ensure the application is connected to a production-ready database 
    with proper configurations.
