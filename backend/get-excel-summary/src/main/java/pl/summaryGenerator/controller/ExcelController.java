@@ -4,17 +4,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.summaryGenerator.config.RabbitmqProducer;
 import pl.summaryGenerator.repository.CombinedDataRepository;
 import pl.summaryGenerator.service.ExcelService;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +26,6 @@ import java.util.Map;
 public class ExcelController {
 
     private final ExcelService excelService;
-    private final RabbitmqProducer rabbitmqProducer;
 
     /**
      * Constructs an ExcelController with the specified ExcelService.
@@ -38,9 +34,8 @@ public class ExcelController {
      * @param combinedDataRepository the repository for combined data (not used in
      *                               this controller)
      */
-    public ExcelController(ExcelService excelService, CombinedDataRepository combinedDataRepository, RabbitmqProducer rabbitmqProducer) {
+    public ExcelController(ExcelService excelService, CombinedDataRepository combinedDataRepository) {
         this.excelService = excelService;
-        this.rabbitmqProducer = rabbitmqProducer;
     }
 
 
