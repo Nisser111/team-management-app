@@ -1,35 +1,45 @@
 package pl.menagment_system.team_menagment_system.config;
 
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.amqp.core.Queue;
 
-/**
- * Configuration class for RabbitMQ.
- * This class defines the necessary beans for RabbitMQ messaging.
- */
 @Configuration
 public class RabbitConfig {
+    public static final String QUEUE_NAME = "employee-updates-queue";
+    public static final String EXCHANGE_NAME = "employee-exchange";
+    public static final String ROUTING_KEY = "employee.update";
 
-    /**
-     * Creates a Queue bean for the RabbitMQ messaging system.
-     * The queue is named "get-employees-excel-summary".
-     *
-     * @return a new instance of Queue
-     */
     @Bean
     public Queue queue() {
-        return new Queue("get-employees-excel-summary");
+        return new Queue(QUEUE_NAME, true);
     }
 
-    /**
-     * Creates a RabbitmqConsumer bean for processing messages from the queue.
-     *
-     * @return a new instance of RabbitmqConsumer
-     */
     @Bean
-    public RabbitmqConsumer reciver() {
-        return new RabbitmqConsumer();
+    public DirectExchange exchange() {
+        return new DirectExchange(EXCHANGE_NAME);
     }
 
+    @Bean
+    public Binding binding(Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(jsonMessageConverter());
+        return rabbitTemplate;
+    }
 }

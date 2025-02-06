@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import pl.menagment_system.team_menagment_system.config.EmployeeEventPublisher;
 import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
 import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.repository.EmployeeRepository;
+import pl.menagment_system.team_menagment_system.repository.TeamRepository;
 import pl.menagment_system.team_menagment_system.services.EmployeeService;
 
 import java.util.HashMap;
@@ -27,12 +29,16 @@ public class EmployeeController {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeService employeeService;
+    private final EmployeeEventPublisher publisher;
+    private final TeamRepository teamRepository;
 
     @Autowired
-    public EmployeeController(EmployeeRepository employeeRepository) {
+    public EmployeeController(EmployeeRepository employeeRepository,EmployeeEventPublisher publisher, TeamRepository teamRepository) {
 
         this.employeeRepository = employeeRepository;
         this.employeeService = new EmployeeService(employeeRepository);
+        this.teamRepository = teamRepository;
+        this.publisher = publisher;
     }
 
     /**
@@ -188,6 +194,7 @@ public class EmployeeController {
             @PathVariable("id") int id,
             @RequestBody @Validated(EmployeeRequestDTO.Update.class) EmployeeRequestDTO employeeRequestDTO) {
         Map<String, Object> response = new HashMap<>();
+        boolean isNewTeam = false;
         try {
             Optional<Employee> existingEmployeeOptional = employeeRepository.findById(id);
 
@@ -224,10 +231,22 @@ public class EmployeeController {
             }
             if (employeeRequestDTO.getTeamId() != null) {
                 existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
+                isNewTeam = true;
             }
 
             String fullName = existingEmployee.getFirstName() + " " + existingEmployee.getLastName();
             employeeRepository.update(existingEmployee);
+
+            if (isNewTeam) {
+                String teamName = teamRepository.findById(existingEmployee.getTeamId()).get().getName();
+
+                Map<String, String> mailData = new HashMap<>();
+                mailData.put("email", existingEmployee.getEmail());
+                mailData.put("firstName", existingEmployee.getFirstName());
+                mailData.put("newTeam", teamName);
+
+                publisher.sendEmployeeUpdate(mailData);
+            }
 
             response.put("success", true);
             response.put("message", "Pracownik " + fullName + " został pomyślnie zaktualizowany.");
