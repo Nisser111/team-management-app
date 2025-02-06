@@ -159,6 +159,8 @@ public class EmployeeController {
             String fullName = employee.getFirstName() + " " + employee.getLastName();
             employeeRepository.save(employee);
 
+            publisher.sendEmployeeUpdate(getMailData(employee));
+
             // Build success response
             response.put("success", true);
             response.put("message", "Pracownik " + fullName + " został dodany.");
@@ -238,14 +240,7 @@ public class EmployeeController {
             employeeRepository.update(existingEmployee);
 
             if (isNewTeam) {
-                String teamName = teamRepository.findById(existingEmployee.getTeamId()).get().getName();
-
-                Map<String, String> mailData = new HashMap<>();
-                mailData.put("email", existingEmployee.getEmail());
-                mailData.put("firstName", existingEmployee.getFirstName());
-                mailData.put("newTeam", teamName);
-
-                publisher.sendEmployeeUpdate(mailData);
+                publisher.sendEmployeeUpdate(getMailData(existingEmployee));
             }
 
             response.put("success", true);
@@ -264,5 +259,16 @@ public class EmployeeController {
             response.put("message", "Wystąpił nieoczekiwany błąd.");
             return ResponseEntity.status(500).body(response);
         }
+    }
+
+    private Map<String, String> getMailData(Employee employee) {
+        String teamName = teamRepository.findById(employee.getTeamId()).get().getName();
+
+        Map<String, String> mailData = new HashMap<>();
+        mailData.put("email", employee.getEmail());
+        mailData.put("firstName", employee.getFirstName());
+        mailData.put("newTeam", teamName);
+
+        return mailData;
     }
 }
