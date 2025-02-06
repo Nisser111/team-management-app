@@ -18,4 +18,13 @@ mat-toolbar {
     font-size: 0.75em;
     margin-left: 0.5em;
   }
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    .logo {
+      height: 2.5rem;
+      padding-right: 0.5em;
+    }
+  }
 }
