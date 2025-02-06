@@ -39,7 +39,7 @@ I've implemented API gateway to manage multiple microservices with different por
 
 ### External API 
 
-My app has an option to send an email notification when new employee has his/her new team.  This is another microservice in the application. I used Twilio service SendGrid to provide this functionality.
+My app sends email notifications via SendGrid (Twilio) when a user is assigned to a new team, either by adding or editing them. This happens automatically on team changes. There's also a manual email endpoint, but it's unused in the frontend.
 
 ## Future of project
 

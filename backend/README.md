@@ -341,7 +341,7 @@ curl -X GET http://localhost:8080/employees
 
 ### Description
 
-This endpoint allows the creation of a new employee in the system. It validates the provided details such as name, email, phone, hire date, role, and team ID before ersisting the employee in the database. The email must be unique.
+This endpoint allows the creation of a new employee in the system. It validates the provided details such as name, email, phone, hire date, role, and team ID before ersisting the employee in the database. The email must be unique. A message is sent to the provided email with information about adding an employee to the team
 
 ---
 
@@ -398,33 +398,47 @@ A `JSON` object representing the new employee's details. All fields are required
    - **Response Body Example**:
 
 ```json
- {
-   "message": "New employee has been added successfully."
- }
+{
+    "success": true,
+    "message": "Pracownik Jan Kowalski został dodany.",
+    "data": {
+	    "id": 123
+		"firstName": "John",
+		"lastName": "Doe",
+		"email": "john.doe@example.com",
+		"phone": "+123456789",
+		"hireDate": "2022-01-15",
+		"role": "Developer",
+		"teamId": 101
+	},
+    "emailSentStatus": "SUCCESS" // or "FAILED" if something went wrong
+}
 ```
 
 7. **400 Bad Request**
    
-   - **Description**: The request contains invalid data, such as a duplicate email, nvalid fields, or missing required fields.
+   - **Description**: The request contains invalid data, such as a duplicate email, invalid fields, or missing required fields.
    
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Email is already in use."
- }
+{
+    "success": false,
+    "message": "Adres e-mail jan.kowalski@example.com jest już zajęty."
+}
 ```
 
-8. **500 Internal Server Error**
+2. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while processing the request.
    
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Unexpected error occurred."
- }
+{
+    "success": false,
+    "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ### Validation Rules
@@ -467,8 +481,7 @@ curl -X POST http://localhost:8080/employees \
 
 ### Description
 
-This endpoint allows updating an existing employee's details. Only the fields provided in the request body will be updated. If a field is not 
-included in the request body, it will not be modified.
+This endpoint allows updating an existing employee's details. Only the fields provided in the request body will be updated. If a field is not included in the request body, it will not be modified. If user is assigned to new team then a message is sent to the provided email with information about adding an employee to the team.
 
 ---
 
@@ -520,7 +533,7 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 #### Status Codes
 
-9. **200 OK**
+3. **200 OK**
    
    - **Description**: The employee was successfully updated.
    
@@ -528,11 +541,23 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 ```json
 {
-  "message": "Employee updated successfully."
+    "success": true,
+    "message": "Pracownik Jan Kowalski został pomyślnie zaktualizowany.",
+    "data": {
+	    "id": 123
+		"firstName": "John",
+		"lastName": "Doe",
+		"email": "john.new@example.com",
+		"phone": "+123456789",
+		"hireDate": "2022-01-15",
+		"role": "Developer",
+		"teamId": 101
+	},
+    "emailSentStatus": "SUCCESS" // or "FAILED" if something went wrong
 }
 ```
 
-10. **400 Bad Request**
+4. **400 Bad Request**
    
    - **Description**: The request contains invalid data, such as a duplicate email, invalid fields, or missing required fields.
    
@@ -540,32 +565,35 @@ A `JSON` object containing one or more fields to be updated. All fields are opti
 
 ```json
 {
-  "error": "Email is already in use."
+    "success": false,
+    "message": "Nowy adres e-mail jest już zajęty."
 }
 ```
 
-11. **404 Not Found**
+5. **404 Not Found**
    
    - **Description**: No employee exists with the specified ID.
    
    - **Response Body Example**:
 
 ```json
- {
-   "error": "Employee not found."
- }
+{
+    "success": false,
+    "message": "Nie znaleziono pracownika o identyfikatorze 999."
+}
 ```
 
-12. **500 Internal Server Error**
+6. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while processing the request.
    
    - **Response Body Example**:
 
 ```json
- {
-   "error": "An unexpected error occurred."
- }
+{
+    "success": false,
+    "message": "Wystąpił nieoczekiwany błąd."
+}
 ```
 
 ### Validation Rules
@@ -636,7 +664,7 @@ None.
 
 #### Status Codes
 
-13. **200 OK**
+7. **200 OK**
    
    - **Description**: The employee was successfully 
      deleted.
@@ -649,7 +677,7 @@ None.
 }
 ```
 
-14. **404 Not Found**
+8. **404 Not Found**
    
    - **Description**: The employee with the specified ID 
      does not exist in the system.
@@ -702,7 +730,7 @@ No specific headers are required for this request. Optional headers may include:
 
 #### Status Codes
 
-15. **200 OK**
+9. **200 OK**
    
    - **Description**: Returns a list of all teams in the 
      system.
@@ -726,7 +754,7 @@ No specific headers are required for this request. Optional headers may include:
 ]
 ```
 
-16. 500 Internal Server Error
+10. 500 Internal Server Error
    
    - **Description**: An unexpected server error occurred 
      while processing the request.
@@ -797,7 +825,7 @@ A `JSON` object representing the new team's details. All fields are required.
 
 #### Status Codes
 
-17. **200 OK**
+11. **200 OK**
    
    - **Description**: The team was successfully added.
    
@@ -809,7 +837,7 @@ A `JSON` object representing the new team's details. All fields are required.
 }
 ```
 
-18. **400 Bad Request**
+12. **400 Bad Request**
    
    - **Description**: The request body contains invalid or missing data. Validation errors will be returned in detail.
    
@@ -821,7 +849,7 @@ A `JSON` object representing the new team's details. All fields are required.
 }
 ```
 
-19. **500 Internal Server Error**
+13. **500 Internal Server Error**
    
    - **Description**: An unexpected server error occurred while processing the request.
    
@@ -901,7 +929,7 @@ A `JSON` object representing the new employee's details. All fields are required
 
 #### Status Codes
 
-20. **200 OK**
+14. **200 OK**
    
    - **Description**: The team was successfully updated.
    
@@ -913,7 +941,7 @@ A `JSON` object representing the new employee's details. All fields are required
 }
 ```
 
-21. **404 Not Found**
+15. **404 Not Found**
    
    - **Description**: The team with the specified ID does 
      not exist.
@@ -926,7 +954,7 @@ A `JSON` object representing the new employee's details. All fields are required
 }
 ```
 
-22. **400 Bad Request**
+16. **400 Bad Request**
    
    - **Description**: The provided data is invalid or the 
      update operation failed.
@@ -991,7 +1019,7 @@ No specific headers are required for this request. Optional headers may include:
 
 #### Status Codes
 
-23. **200 OK**
+17. **200 OK**
    
    - **Description**: The team was successfully deleted.
    
@@ -1003,7 +1031,7 @@ No specific headers are required for this request. Optional headers may include:
 }
 ```
 
-24. **404 Not Found**
+18. **404 Not Found**
    
    - **Description**: The team with the specified ID does 
      not exist.
@@ -1016,7 +1044,7 @@ No specific headers are required for this request. Optional headers may include:
 }
 ```
 
-25. **500 Internal Server Error**
+19. **500 Internal Server Error**
    
    - **Description**: An unexpected server error occurred 
      during the deletion process.
@@ -1079,7 +1107,7 @@ None. This API does not accept any request body.
 
 #### Status Codes
 
-26. **200 OK**
+20. **200 OK**
    
    - **Description**: The request was successful.
    
@@ -1087,7 +1115,7 @@ None. This API does not accept any request body.
    
           The response body contains the binary Excel file (`.xlsx`).
 
-27. **500 Internal Server Error**
+21. **500 Internal Server Error**
    
    - **Description**: An unexpected error occurred while generating the summary file.
    
@@ -1154,7 +1182,7 @@ No specific headers are required for this request.
 
 #### Status Codes
 
-28. **200 OK**
+22. **200 OK**
    
    - **Description**: The mail message was sent successfully.
    
@@ -1166,7 +1194,7 @@ No specific headers are required for this request.
 }
 ```
 
-29. **500 Internal Server Error**
+23. **500 Internal Server Error**
    
    - **Description**: An unexpected server error occurred during the mail sending.
    
@@ -1191,7 +1219,7 @@ curl -X POST http://localhost:8080/email/send?toEmail=name@example.com&employee_
 
 To deploy the application:
 
-30. Package it into a JAR file:
+24. Package it into a JAR file:
 
 ```shell
 mvn package
@@ -1199,11 +1227,11 @@ mvn package
 
 The generated JAR file will be under the `target/` directory.
 
-31. Run the JAR file:
+25. Run the JAR file:
 
 ```shell
 java -jar target/team-management-api.jar
 ```
 
-32. Ensure the application is connected to a production-ready database 
+26. Ensure the application is connected to a production-ready database 
    with proper configurations.
