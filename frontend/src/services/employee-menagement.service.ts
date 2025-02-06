@@ -133,7 +133,13 @@ export class EmployeeManagementService {
    */
   private editEmployee(employee: Employee): void {
     this.employeesService.editById(employee).subscribe({
-      next: ({ message }) => this.communicationService.showInfo(message),
+      next: ({ message, emailSentStatus }) => {
+        if (emailSentStatus === "FAILED")
+          this.communicationService.showInfo(
+            message + " Nie udało się wysłać powiadomienia email."
+          );
+        else this.communicationService.showInfo(message);
+      },
       error: (err) => this.communicationService.showError(err),
     });
   }
@@ -149,7 +155,13 @@ export class EmployeeManagementService {
   private addEmployee(employee: Employee) {
     return this.employeesService.addNew(employee).pipe(
       tap({
-        next: ({ message }) => this.communicationService.showInfo(message),
+        next: ({ message, emailSentStatus }) => {
+          if (emailSentStatus === "FAILED")
+            this.communicationService.showInfo(
+              message + " Nie udało się wysłać powiadomienia email."
+            );
+          else this.communicationService.showInfo(message);
+        },
         error: (err) => this.communicationService.showError(err),
       }),
       map((response) => ({ success: true })),

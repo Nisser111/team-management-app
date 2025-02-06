@@ -6,4 +6,5 @@ export interface ApiResponse {
   message: string;
   data?: Team | Employee | [];
   error?: string;
+  emailSentStatus?: "SUCCESS" | "FAILED";
 }
