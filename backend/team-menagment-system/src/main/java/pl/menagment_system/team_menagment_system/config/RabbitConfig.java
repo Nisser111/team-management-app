@@ -12,25 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
-    public static final String QUEUE_NAME = "employee-updates-queue";
-    public static final String EXCHANGE_NAME = "employee-exchange";
-    public static final String ROUTING_KEY = "employee.update";
-
-    @Bean
-    public Queue queue() {
-        return new Queue(QUEUE_NAME, true);
-    }
-
-    @Bean
-    public DirectExchange exchange() {
-        return new DirectExchange(EXCHANGE_NAME);
-    }
-
-    @Bean
-    public Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
-    }
-
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
@@ -41,5 +22,30 @@ public class RabbitConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public DirectExchange employeeExchange() {
+        return new DirectExchange("employee-exchange");
+    }
+
+    @Bean
+    public Queue employeeUpdatesQueue() {
+        return new Queue("employee-updates-queue");
+    }
+
+    @Bean
+    public Queue emailStatusQueue() {
+        return new Queue("email-status-queue");
+    }
+
+    @Bean
+    public Binding employeeUpdatesBinding(Queue employeeUpdatesQueue, DirectExchange employeeExchange) {
+        return BindingBuilder.bind(employeeUpdatesQueue).to(employeeExchange).with("employee.update");
+    }
+
+    @Bean
+    public Binding emailStatusBinding(Queue emailStatusQueue, DirectExchange employeeExchange) {
+        return BindingBuilder.bind(emailStatusQueue).to(employeeExchange).with("email.status");
     }
 }

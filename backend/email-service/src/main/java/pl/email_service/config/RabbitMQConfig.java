@@ -1,5 +1,9 @@
 package pl.email_service.config;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -20,5 +24,30 @@ public class RabbitMQConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public DirectExchange employeeExchange() {
+        return new DirectExchange("employee-exchange");
+    }
+
+    @Bean
+    public Queue employeeUpdatesQueue() {
+        return new Queue("employee-updates-queue");
+    }
+
+    @Bean
+    public Queue emailStatusQueue() {
+        return new Queue("email-status-queue");
+    }
+
+    @Bean
+    public Binding employeeUpdatesBinding(Queue employeeUpdatesQueue, DirectExchange employeeExchange) {
+        return BindingBuilder.bind(employeeUpdatesQueue).to(employeeExchange).with("employee.update");
+    }
+
+    @Bean
+    public Binding emailStatusBinding(Queue emailStatusQueue, DirectExchange employeeExchange) {
+        return BindingBuilder.bind(emailStatusQueue).to(employeeExchange).with("email.status");
     }
 }

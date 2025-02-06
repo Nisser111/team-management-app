@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.menagment_system.team_menagment_system.config.EmployeeEventPublisher;
+import pl.menagment_system.team_menagment_system.services.EmployeeEventPublisher;
 import pl.menagment_system.team_menagment_system.dto.EmployeeRequestDTO;
 import pl.menagment_system.team_menagment_system.model.Employee;
 import pl.menagment_system.team_menagment_system.repository.EmployeeRepository;
@@ -18,10 +18,12 @@ import java.util.Optional;
 
 /**
  * Controller class for managing employee-related operations.
- * This class handles HTTP requests for operations such as retrieving all
- * employees,
- * retrieving employees by team, adding new employees, deleting employees, and
- * updating employees.
+ * This class handles HTTP requests for operations such as:
+ * - Retrieving all employees
+ * - Retrieving employees by team
+ * - Adding new employees
+ * - Deleting employees
+ * - Updating employees
  */
 @RestController
 @RequestMapping("/employees")
@@ -33,8 +35,8 @@ public class EmployeeController {
     private final TeamRepository teamRepository;
 
     @Autowired
-    public EmployeeController(EmployeeRepository employeeRepository,EmployeeEventPublisher publisher, TeamRepository teamRepository) {
-
+    public EmployeeController(EmployeeRepository employeeRepository, EmployeeEventPublisher publisher,
+            TeamRepository teamRepository) {
         this.employeeRepository = employeeRepository;
         this.employeeService = new EmployeeService(employeeRepository);
         this.teamRepository = teamRepository;
@@ -43,8 +45,8 @@ public class EmployeeController {
 
     /**
      * Retrieves all employees from the repository and returns a response containing
-     * the result.
-     * The response includes employees if found, or appropriate error messages in
+     * the result. The response includes employees if found, or appropriate error
+     * messages in
      * case of failure.
      *
      * @return ResponseEntity containing a Map with the following keys:
@@ -86,7 +88,7 @@ public class EmployeeController {
      * Deletes an employee identified by the given ID from the repository.
      * If the employee is successfully deleted, the response will contain
      * the employee details and a success message. If not found, a 404 error
-     * message is returned. In case of any unexected error, a 500 error response is
+     * message is returned. In case of any unexpected error, a 500 error response is
      * returned.
      *
      * @param id the unique identifier of the employee to be deleted
@@ -128,14 +130,14 @@ public class EmployeeController {
      * validation constraints.
      *
      * @param dto The EmployeeRequestDTO containing the necessary details of the
-     *            employee to be added.
-     *            This includes first name, last name, email, phone, hire date,
-     *            role, and team ID.
+     *            employee to be added, including first name, last name, email,
+     *            phone,
+     *            hire date, role, and team ID.
      * @return A ResponseEntity containing a Map with the operation's status, a
      *         message, and the added employee object if successful.
      *         If there's a validation error, it returns a 400 status with an error
-     *         message.
-     *         If there's an unexpected error, it returns a 500 status with an error
+     *         message. If there's an unexpected error, it returns a 500 status with
+     *         an error
      *         message.
      */
     @PostMapping
@@ -159,12 +161,13 @@ public class EmployeeController {
             String fullName = employee.getFirstName() + " " + employee.getLastName();
             employeeRepository.save(employee);
 
-            publisher.sendEmployeeUpdate(getMailData(employee));
+            String emailStatus = publisher.sendEmployeeUpdate(getMailData(employee));
 
             // Build success response
             response.put("success", true);
             response.put("message", "Pracownik " + fullName + " został dodany.");
             response.put("data", employee);
+            response.put("emailSentStatus", emailStatus);
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException ex) {
@@ -232,20 +235,18 @@ public class EmployeeController {
                 existingEmployee.setRole(employeeRequestDTO.getRole());
             }
             if (employeeRequestDTO.getTeamId() != null) {
+                isNewTeam = existingEmployee.getTeamId() != employeeRequestDTO.getTeamId();
                 existingEmployee.setTeamId(employeeRequestDTO.getTeamId());
-                isNewTeam = true;
             }
 
             String fullName = existingEmployee.getFirstName() + " " + existingEmployee.getLastName();
             employeeRepository.update(existingEmployee);
 
-            if (isNewTeam) {
-                publisher.sendEmployeeUpdate(getMailData(existingEmployee));
-            }
-
             response.put("success", true);
             response.put("message", "Pracownik " + fullName + " został pomyślnie zaktualizowany.");
             response.put("data", existingEmployee);
+            response.put("emailSentStatus",
+                    isNewTeam ? publisher.sendEmployeeUpdate(getMailData(existingEmployee)) : null);
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException ex) {

@@ -1,6 +1,7 @@
 package pl.email_service.service;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,13 +18,18 @@ public class MailServiceListener {
 
     private final SendGridEmailService sendGridEmailService;
 
+    private final RabbitTemplate rabbitTemplate;
+
     /**
      * Constructor for MailServiceListener.
      *
      * @param sendGridEmailService The service used to send emails via SendGrid.
+     * @param rabbitTemplate       The RabbitTemplate used for sending messages to
+     *                             RabbitMQ.
      */
-    public MailServiceListener(SendGridEmailService sendGridEmailService) {
+    public MailServiceListener(SendGridEmailService sendGridEmailService, RabbitTemplate rabbitTemplate) {
         this.sendGridEmailService = sendGridEmailService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     /**
@@ -33,13 +39,14 @@ public class MailServiceListener {
      *
      * @param mailData A map containing email data, including the recipient's email,
      *                 employee's first name, and the new team.
+     * @return A string indicating the result of the email sending operation
+     *         ("SUCCESS" or "FAILED").
      * @throws IOException If an error occurs while sending the email.
      */
     @RabbitListener(queues = "employee-updates-queue")
-    public void receiveMessage(Map<String, String> mailData) throws IOException {
-        System.out.println("Sending email to " + mailData.get("email") + " about update of " + mailData.get("firstName")
-                + ". New team: " + mailData.get("newTeam"));
-        sendEmailNotification(mailData);
+    public String receiveMessage(Map<String, String> mailData) throws IOException {
+        boolean emailSent = sendEmailNotification(mailData);
+        return emailSent ? "SUCCESS" : "FAILED";
     }
 
     /**
@@ -48,24 +55,19 @@ public class MailServiceListener {
      *
      * @param mailData A map containing email data, including the recipient's email,
      *                 employee's first name, and the new team.
+     * @return A boolean indicating whether the email was sent successfully.
      * @throws IOException If an error occurs while sending the email.
      */
-    private void sendEmailNotification(Map<String, String> mailData) throws IOException {
+    private boolean sendEmailNotification(Map<String, String> mailData) throws IOException {
         try {
             Map<String, String> dynamicData = new HashMap<>();
             dynamicData.put("employee_name", mailData.get("firstName"));
             dynamicData.put("team_name", mailData.get("newTeam"));
 
-            boolean result = sendGridEmailService.sendDynamicEmail(
+            return sendGridEmailService.sendDynamicEmail(
                     System.getenv("SENDER_EMAIL"),
                     mailData.get("email"),
                     dynamicData);
-
-            if (result) {
-                System.out.println("Email sent to " + mailData.get("email"));
-            } else {
-                System.out.println("Email not sent to " + mailData.get("email"));
-            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
