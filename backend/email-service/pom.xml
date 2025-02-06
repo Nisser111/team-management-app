@@ -101,6 +101,12 @@
 			<artifactId>sendgrid-java</artifactId>
 			<version>4.10.1</version>
 		</dependency>
+
+		<!-- AMQP for rabbitMQ -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

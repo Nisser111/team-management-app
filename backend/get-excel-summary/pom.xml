@@ -65,12 +65,6 @@
 			<version>5.2.3</version>
 		</dependency>
 
-		<!-- Spring Boot AMQP Starter -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-amqp</artifactId>
-		</dependency>
-
 		<!-- Jakarta Servlet API -->
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
