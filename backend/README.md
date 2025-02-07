@@ -14,8 +14,9 @@ This is the guide to help you quickly set up, run, and interact with the Team ma
      - [Configure the Database](#2-configure-the-database)
      - [Build the Project](#3-build-the-project)
      - [Run the Application](#4-run-the-application)
-   - [Database Configuration](#2-Database-configuration)
+   - [Database configuration](#2-Database-configuration)
    - [SendGrid configuration](#2-SendGrid-configuration)
+   - [SendApi configuration](#2-SendApi-configuration)
 
 2. **Employee management endpoints**
    
@@ -238,6 +239,28 @@ SENDER_EMAIL=your-mail@example.com
 ### 3. Integrate your API with external API
 
 Go to *Integration Guide* tab and follow step-by-step guide there to connect your app with the SendGrid. At the end verify connection by sending any request. 
+
+## SendApi configuration
+
+The API provides functionality to send auto message via SMS when employee has been assigned to the new team. It happens on patch and post endpoint. Configure service following these steps. 
+
+### Get token
+
+Register or log in to your account in **[www.smsapi.pl](https://www.smsapi.pl)** service. Get your OAuth token and set them in environment variable.
+
+```
+SMSAPI_OAUTH_TOKEN=your token
+```
+
+### Enable your IP 
+
+The SMS API requires to allow all IP's which uses their API. Paste your server IP in the tab.
+
+`API Settings > IP Filters`
+
+### Test 
+
+Add new employee or modify existing and check if SMS notification was sent. A employee's phone number is the one to which the message is sent. 
 
 ---
 
