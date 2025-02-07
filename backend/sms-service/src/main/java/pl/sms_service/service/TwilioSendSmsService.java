@@ -11,24 +11,35 @@ public class TwilioSendSmsService {
 
     private final String messagingServiceId = System.getenv("TWILIO_MSG_SERVICE_ID");
 
-    public void sendSms(String to, String templateSid, Map<String, String> variables) {
-        if (messagingServiceId == null || messagingServiceId.isEmpty()) {
-            throw new IllegalStateException("Twilio Messaging Service ID is not set in environment variables.");
+    public boolean sendSms(String to, String templateSid, Map<String, String> variables) {
+        try {
+            if (messagingServiceId == null || messagingServiceId.isEmpty()) {
+                throw new IllegalStateException("Twilio Messaging Service ID is not set in environment variables.");
+            }
+
+            if (templateSid == null || templateSid.isEmpty()) {
+                throw new IllegalArgumentException("Template SID must not be null or empty.");
+            }
+
+            Message.creator(
+                    new PhoneNumber(to),
+                    messagingServiceId,
+                            "Witaj " + variables.get("employee_name") + ",\n" +
+                                    "\n" +
+                                    "Z przyjemnością informujemy, że zostałeś/aś dodany/a do zespołu " + variables.get("team_name") + ".\n" +
+                                    "\n" +
+                                    "Współpracuj, twórz innowacje i wywieraj wpływ razem ze swoimi nowymi kolegami.\n" +
+                                    "\n" +
+                                    "Zespół Systemu Zarządzania Zespołami"
+                    ).setMessagingServiceSid(messagingServiceId)
+                    .setSmartEncoded(true)
+                    .create();
+
+
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
         }
-
-        if (templateSid == null || templateSid.isEmpty()) {
-            throw new IllegalArgumentException("Template SID must not be null or empty.");
-        }
-
-        Message message = Message.creator(
-                        new PhoneNumber(to),
-                        messagingServiceId,
-                        ""
-                ).setMessagingServiceSid(messagingServiceId)
-                .setSmartEncoded(true)
-                .setApplicationSid(templateSid) // This ensures the correct dynamic template is used
-                .create();
-
-        System.out.println("Message Sent: " + message.getSid());
     }
 }

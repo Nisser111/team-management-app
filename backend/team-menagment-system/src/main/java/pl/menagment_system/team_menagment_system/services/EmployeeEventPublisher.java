@@ -31,7 +31,11 @@ public class EmployeeEventPublisher {
      * @return A response from the message broker, typically indicating the result
      *         of the operation.
      */
-    public String sendEmployeeUpdate(Map<String, String> mailData) {
-        return (String) rabbitTemplate.convertSendAndReceive("employee-exchange", "employee.update", mailData);
+    public String sendEmployeeUpdateMail(Map<String, String> mailData) {
+        return (String) rabbitTemplate.convertSendAndReceive("employee-mail-exchange", "employee.mail.update", mailData);
+    }
+
+    public String sendEmployeeUpdateSms(Map<String, String> mailData) {
+        return (String) rabbitTemplate.convertSendAndReceive("employee-sms-exchange", "employee.sms.update", mailData);
     }
 }

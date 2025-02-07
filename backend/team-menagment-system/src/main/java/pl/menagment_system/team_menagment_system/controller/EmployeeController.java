@@ -161,13 +161,15 @@ public class EmployeeController {
             String fullName = employee.getFirstName() + " " + employee.getLastName();
             employeeRepository.save(employee);
 
-            String emailStatus = publisher.sendEmployeeUpdate(getMailData(employee));
+            String emailStatus = publisher.sendEmployeeUpdateMail(getNotificationData(employee));
+            String smsStatus = publisher.sendEmployeeUpdateSms(getNotificationData(employee));
 
             // Build success response
             response.put("success", true);
             response.put("message", "Pracownik " + fullName + " został dodany.");
             response.put("data", employee);
             response.put("emailSentStatus", emailStatus);
+            response.put("smsSentStatus", smsStatus);
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException ex) {
@@ -246,7 +248,8 @@ public class EmployeeController {
             response.put("message", "Pracownik " + fullName + " został pomyślnie zaktualizowany.");
             response.put("data", existingEmployee);
             response.put("emailSentStatus",
-                    isNewTeam ? publisher.sendEmployeeUpdate(getMailData(existingEmployee)) : null);
+                    isNewTeam ? publisher.sendEmployeeUpdateMail(getNotificationData(existingEmployee)) : null);
+            response.put("smsSentStatus", isNewTeam ? publisher.sendEmployeeUpdateSms(getNotificationData(existingEmployee)) : null);
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException ex) {
@@ -262,14 +265,15 @@ public class EmployeeController {
         }
     }
 
-    private Map<String, String> getMailData(Employee employee) {
+    private Map<String, String> getNotificationData(Employee employee) {
         String teamName = teamRepository.findById(employee.getTeamId()).get().getName();
 
-        Map<String, String> mailData = new HashMap<>();
-        mailData.put("email", employee.getEmail());
-        mailData.put("firstName", employee.getFirstName());
-        mailData.put("newTeam", teamName);
+        Map<String, String> employeeNotificationData = new HashMap<>();
+        employeeNotificationData.put("email", employee.getEmail());
+        employeeNotificationData.put("firstName", employee.getFirstName());
+        employeeNotificationData.put("newTeam", teamName);
+        employeeNotificationData.put("phone", employee.getPhone());
 
-        return mailData;
+        return employeeNotificationData;
     }
 }
