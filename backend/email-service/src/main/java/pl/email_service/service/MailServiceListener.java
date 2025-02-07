@@ -43,7 +43,7 @@ public class MailServiceListener {
      *         ("SUCCESS" or "FAILED").
      * @throws IOException If an error occurs while sending the email.
      */
-    @RabbitListener(queues = "employee-updates-queue")
+    @RabbitListener(queues = "employee-updates-mail-queue")
     public String receiveMessage(Map<String, String> mailData) throws IOException {
         boolean emailSent = sendEmailNotification(mailData);
         return emailSent ? "SUCCESS" : "FAILED";
