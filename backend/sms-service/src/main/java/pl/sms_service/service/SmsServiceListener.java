@@ -11,12 +11,12 @@ import java.util.Map;
 @Service
 public class SmsServiceListener {
 
-    private final TwilioSendSmsService twilioSendSmsService;
+    private final SmsApiSendSmsService smsApiSendSmsService;
 
     private final RabbitTemplate rabbitTemplate;
 
-    public SmsServiceListener(TwilioSendSmsService twilioSendSmsService, RabbitTemplate rabbitTemplate) {
-        this.twilioSendSmsService = twilioSendSmsService;
+    public SmsServiceListener(SmsApiSendSmsService smsApiSendSmsService, RabbitTemplate rabbitTemplate) {
+        this.smsApiSendSmsService = smsApiSendSmsService;
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -31,8 +31,9 @@ public class SmsServiceListener {
             Map<String, String> dynamicData = new HashMap<>();
             dynamicData.put("employee_name", smsData.get("firstName"));
             dynamicData.put("team_name", smsData.get("newTeam"));
+            dynamicData.put("phone", smsData.get("phone"));
 
-            return twilioSendSmsService.sendSms(smsData.get("phone"), System.getenv("TWILIO_MSG_TEMPLATE_ID"), dynamicData);
+            return smsApiSendSmsService.sendSms(dynamicData);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -111,12 +111,11 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
-		<!-- Twilio SDK -->
+		<!-- SMS API library -->
 		<dependency>
-			<groupId>com.twilio.sdk</groupId>
-			<artifactId>twilio</artifactId>
-			<version>10.6.8</version>
-			<scope>compile</scope>
+			<groupId>pl.smsapi</groupId>
+			<artifactId>smsapi-lib</artifactId>
+			<version>3.0.1</version>
 		</dependency>
 
 		<!-- Javax annotation API -->
